@@ -71,9 +71,40 @@ namespace BO2_Console
                 "r_sky_intensity_factor0 0 \n" +
                 "r_sky_intensity_factor 0 \n";
             string threefps = "com_maxfps 30 \n" + "timescale 0.1";
-            Console.WriteLine("Please enter your config's url, then press F10 for single commands, and F9 for config. Type switch if you wish to swap. Full list of commands avaliable on http://consol.cf");
+            string sixfps = "com_maxfps 30 \n" + "timescale 0.05";
+            string maxfps = "com_maxfps 30 \n" + "timescale 0.01";
+            string quality = " r_lodbiasSkinned -1000\n" +
+                "r_lodbiasRigid -1000";
+            string hud = "hud_health_pulserate_critical 0\n " +
+                "hud_health_pulserate_injured 0\n" +
+                "hud_health_startpulse_critical 0\n" +
+"hud_health_startpulse_injured 0\n" +
+"hud_healthOverlay_phaseEnd_pulseDuration 0\n" +
+"hud_healthOverlay_phaseEnd_toAlpha 0\n" +
+"hud_healthOverlay_phaseOne_pulseDuration 0\n" +
+"hud_healthOverlay_phaseThree_pulseDuration 0\n" +
+"hud_healthOverlay_phaseThree_toAlphaMultiplier 0\n" +
+"hud_healthOverlay_phaseTwo_pulseDuration 0\n" +
+"hud_healthOverlay_phaseTwo_toAlphaMultiplier 0\n" +
+"hud_healthOverlay_pulseStart 0\n" +
+"hud_healthOverlay_regenPauseTime 0\n" +
+"r_blur 0\n" +
+"r_detail 1\n" +
+"r_distortion 1\n" +
+"r_drawWater 1\n" +
+"r_forceLod 0\n" +
+"r_lodBiasRigid - 1000\n" +
+"r_lodBiasSkinned - 1000\n" +
+"r_lodScaleRigid 1\n" +
+"r_lodScaleSkinned 1\n" +
+"r_normalMap 1\n" +
+"r_rendererinuse shader model 3.0\n" +
+"r_rendererPreference shader model 3.0";
+            Console.WriteLine("Please enter your config's url, then press F10 for single commands, and F9 for config.\nType switch if you wish to swap.\n" +
+                "Full list of commands and how to use avaliable on http://consol.cf\n" +
+                "Enter URL Here: ");
             string url = Console.ReadLine();
-            int cVersion = 1;
+            int cVersion = 2;
             int oVersion;
             string XMLFileLocation = "https://raw.githubusercontent.com/odysollo/new/master/version.xml";
             bool debug = false;
@@ -115,6 +146,22 @@ namespace BO2_Console
                         else if (cmd == "fps 300")
                         {
                             p.Send(threefps);
+                        }
+                        else if (cmd == "fps 600")
+                        {
+                            p.Send(sixfps);
+                        }
+                        else if (cmd == "fps max")
+                        {
+                            p.Send(maxfps);
+                        }
+                        else if (cmd == "quality")
+                        {
+                            p.Send(quality);
+                        }
+                        else if (cmd == "hud")
+                        {
+                            p.Send(hud);
                         }
                     }
                     else

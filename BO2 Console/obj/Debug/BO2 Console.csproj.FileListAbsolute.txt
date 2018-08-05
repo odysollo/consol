@@ -1,0 +1,7 @@
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Debug\CONSOL.exe.config
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Debug\CONSOL.exe
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Debug\CONSOL.pdb
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Debug\BO2 Console.csprojAssemblyReference.cache
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Debug\BO2 Console.csproj.CoreCompileInputs.cache
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Debug\CONSOL.exe
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Debug\CONSOL.pdb

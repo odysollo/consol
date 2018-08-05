@@ -5,3 +5,10 @@ C:\Users\laz\source\repos\BO2 Console\BO2 Console\bin\Release\CONSOL.pdb
 C:\Users\laz\source\repos\BO2 Console\BO2 Console\obj\Release\CONSOL.exe
 C:\Users\laz\source\repos\BO2 Console\BO2 Console\obj\Release\CONSOL.pdb
 C:\Users\laz\source\repos\BO2 Console\BO2 Console\obj\Release\BO2 Console.csprojAssemblyReference.cache
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Release\CONSOL.exe.config
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Release\CONSOL.exe
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\bin\Release\CONSOL.pdb
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Release\BO2 Console.csprojAssemblyReference.cache
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Release\BO2 Console.csproj.CoreCompileInputs.cache
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Release\CONSOL.exe
+C:\Users\laz\Documents\GitHub\consol\BO2 Console\obj\Release\CONSOL.pdb
