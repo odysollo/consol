@@ -12,9 +12,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-
+using System.IO;
 namespace BO2_Console
 {
     public class WebConfigReader
@@ -143,16 +142,19 @@ namespace BO2_Console
                 "r_glow_allowed 1\n" +
                 "r_seethru_decal_enable 1\n" +
                 "r_drawdecals 1\n";
-            Console.WriteLine("Please enter your config's url, then press F10 for single commands, and F9 for config.\nType switch if you wish to swap.\n" +
-                "Full list of commands and how to use avaliable on http://consol.cf\n" +
-                "Enter URL Here: ");
+            string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
+            Console.WriteLine("Please enter your config's code, then press F10 for single commands, and F9 for config.\nType switch if you wish to swap.\n" +
+                "Full list of commands and how to get your code on http://consol.cf\n" +
+                "Enter code Here: ");
             string url = Console.ReadLine();
+            string urlprefix = "http://consol.cf/configs/";
+            string urlsuffix = ".cfg";
             Console.WriteLine("Please press F10 if you wish to enter single commands, or F9 if you wish to use your config.\nYou can later switch by typing switch into the console");
-            int cVersion = 3;
+            int cVersion = 4;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
-            bool beta = false;
+            //bool beta = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
             var VersionElement = doc.Descendants("Version");
             ConsoleKeyInfo keyinfo = Console.ReadKey();
@@ -168,10 +170,11 @@ namespace BO2_Console
                 {
                     debug = false;
                 }
-                if (keyinfo.Key == ConsoleKey.F11)
-                {
-                    beta = true;
-                }
+                //if (keyinfo.Key == ConsoleKey.F11)
+                //{
+                //beta = true;
+                //}
+                //http://odyisland.team/i/jjpr.png
                 if (cVersion < oVersion)
                 {
                     Process.Start("http://consol.cf/update.php");
@@ -221,6 +224,10 @@ namespace BO2_Console
                         {
                             p.Send(regular);
                         }
+                        else if (cmd == "greensky")
+                        {
+                            p.Send(greensky);
+                        }
                     }
                     else
                     {
@@ -231,18 +238,44 @@ namespace BO2_Console
                             debug = !debug;
                         }
                         WebConfigReader conf =
-                        new WebConfigReader(url);
+                        new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
                         {
-                                p.Send(s);
-                            }
+                            p.Send(s);
                         }
                     }
                 }
             }
         }
     }
+}
+
+
+//else
+//{
+//Console.WriteLine("Press f11 to enter config and back to manual command");
+
+//WebConfigReader conf =
+//new WebConfigReader(url);
+
+//if (Convert.ToBoolean((long) GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+//{
+//string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+//foreach (string s in tokens)
+//{
+//p.Send(s);
+//}
+
+//debug = !debug;
+//Task.Delay(300);
+//}
+
+//Task.Delay(100);
+//}
+
+
+
 
 class BO2
 {
