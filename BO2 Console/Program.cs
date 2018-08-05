@@ -104,9 +104,10 @@ namespace BO2_Console
                 "Full list of commands and how to use avaliable on http://consol.cf\n" +
                 "Enter URL Here: ");
             string url = Console.ReadLine();
-            int cVersion = 2;
+            Console.WriteLine("Please press F10 if you wish to enter single commands, or F9 if you wish to use your config.\nYou can later switch by typing switch into the console");
+            int cVersion = 3;
             int oVersion;
-            string XMLFileLocation = "https://raw.githubusercontent.com/odysollo/new/master/version.xml";
+            string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
             var VersionElement = doc.Descendants("Version");
@@ -135,6 +136,7 @@ namespace BO2_Console
                         Console.WriteLine("Please type in a command");
                         cmd = Console.ReadLine();
                         p.Send(cmd);
+                        Console.WriteLine("Command successfully executed\n");
                         if (cmd == "switch")
                         {
                             debug = !debug;
