@@ -13,6 +13,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace BO2_Console
 {
@@ -51,6 +52,15 @@ namespace BO2_Console
 
     class Program
     {
+        [DllImport("User32.dll")]
+        public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
+
+        [DllImport("User32.dll")]
+        public static extern short GetAsyncKeyState(System.Int32 vKey);
+
+        [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        public static extern long GetAsyncKeyState(long vKey);
+
         static void Main(string[] args)
         {
             var p = new BO2();
@@ -100,6 +110,39 @@ namespace BO2_Console
 "r_normalMap 1\n" +
 "r_rendererinuse shader model 3.0\n" +
 "r_rendererPreference shader model 3.0";
+            string green = "r_modellimit 0 \n" + "r_skipPvs 1\n" + "r_lockPvs .875\n" + "r_bloomTweaks 1\n" +
+                 "r_bloomHiQuality 0\n" +
+                "r_clearColor 0 1 0 0\n" +
+                "r_clearColor2 0 1 0 0\n" +
+                 "r_znear 10000\n" +
+                 "r_zfar 0.000001\n" +
+                 "r_glow_allowed 0\n" +
+                 "r_glowtweakbloomintensity 0\n" +
+                 "r_glowtweakradius 0\n" +
+                 "r_glowTweakEnable 0\n" +
+                 "r_glowUseTweaks 0\n" +
+                 "r_glow 0\n" +
+                 "r_glow_allowed 0\n" +
+                 "r_seethru_decal_enable 0\n" +
+                 "r_drawdecals 0\n";
+            string regular = "r_modellimit 1000\n" +
+                "r_skipPvs 0\n" +
+                "r_lockPvs 0\n" +
+                "r_clearColor 0 0 0 0\n" +
+                "r_clearColor2 0 0 0 0\n" +
+                "r_bloomTweaks 0\n" +
+                "r_bloomHiQuality 1\n" +
+                "r_znear 10000\n" +
+                "r_zfar 0\n" +
+                "r_glow_allowed 1\n" +
+                "r_glowtweakbloomintensity 1\n" +
+                "r_glowtweakradius 1\n" +
+                "r_glowTweakEnable 1\n" +
+                "r_glowUseTweaks 1\n" +
+                "r_glow 1\n" +
+                "r_glow_allowed 1\n" +
+                "r_seethru_decal_enable 1\n" +
+                "r_drawdecals 1\n";
             Console.WriteLine("Please enter your config's url, then press F10 for single commands, and F9 for config.\nType switch if you wish to swap.\n" +
                 "Full list of commands and how to use avaliable on http://consol.cf\n" +
                 "Enter URL Here: ");
@@ -109,6 +152,7 @@ namespace BO2_Console
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
+            bool beta = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
             var VersionElement = doc.Descendants("Version");
             ConsoleKeyInfo keyinfo = Console.ReadKey();
@@ -123,6 +167,10 @@ namespace BO2_Console
                 if (keyinfo.Key == ConsoleKey.F9)
                 {
                     debug = false;
+                }
+                if (keyinfo.Key == ConsoleKey.F11)
+                {
+                    beta = true;
                 }
                 if (cVersion < oVersion)
                 {
@@ -165,6 +213,14 @@ namespace BO2_Console
                         {
                             p.Send(hud);
                         }
+                        else if (cmd == "greenscreen")
+                        {
+                            p.Send(green);
+                        }
+                        else if (cmd == "regular")
+                        {
+                            p.Send(regular);
+                        }
                     }
                     else
                     {
@@ -179,14 +235,14 @@ namespace BO2_Console
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
                         {
-                            p.Send(s);
+                                p.Send(s);
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 
 class BO2
 {
