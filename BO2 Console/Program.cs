@@ -57,10 +57,22 @@ namespace BO2_Console
             p.FindGame();
             string cmd;
             string cmd2;
-            Console.WriteLine("Please enter your config's url");
+            string night = "r_lightTweakSunColor 0.8 0.8 0.8 \n" +
+                "r_lightTweakSunLight 7 \n " +
+                "r_lightTweakSunDirection \n" +
+                "sm_enable 1 \n" +
+                "sm_maxLights 1 \n" +
+                "sm_polygonoffsetscale 5 \n" +
+                "sm_polygonoffsetbias 0.2 \n" +
+                "sm_polygonoffsetbias 0.8 \n" +
+                "sm_sunSampleSizeNear 0.8 \n" +
+                "sm_sunShadowScale 1 \n" +
+                "r_skyColorTemp \n" +
+                "r_sky_intensity_factor0 0 \n" +
+                "r_sky_intensity_factor 0 \n";
+            string threefps = "com_maxfps 30 \n" + "timescale 0.1";
+            Console.WriteLine("Please enter your config's url, then press F10 for single commands, and F9 for config. Type switch if you wish to swap. Full list of commands avaliable on http://consol.cf");
             string url = Console.ReadLine();
-            //Console.WriteLine("Please enter your second config's url (leave blank if you do not wish to have a second config)");
-            //string url2 = Console.ReadLine();
             int cVersion = 1;
             int oVersion;
             string XMLFileLocation = "https://raw.githubusercontent.com/odysollo/new/master/version.xml";
@@ -95,6 +107,14 @@ namespace BO2_Console
                         if (cmd == "switch")
                         {
                             debug = !debug;
+                        }
+                        else if (cmd == "night")
+                        {
+                            p.Send(night);
+                        }
+                        else if (cmd == "fps 300")
+                        {
+                            p.Send(threefps);
                         }
                     }
                     else
