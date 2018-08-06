@@ -149,6 +149,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
+            string custom;
             Console.WriteLine("Please press F10 if you wish to enter single commands, or F9 if you wish to use your config.\nYou can later switch by typing switch into the console");
             int cVersion = 4;
             int oVersion;
@@ -296,7 +297,7 @@ class BO2
         SetInformation = 0x00000200,
         QueryInformation = 0x00000400,
         QueryLimitedInformation = 0x00001000,
-        Synchronize = 0x00100000
+        Synchronize = 0x00100000,
     }
 
     [DllImport("kernel32.dll")]
