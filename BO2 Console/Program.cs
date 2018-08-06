@@ -145,13 +145,13 @@ namespace BO2_Console
             string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
             Console.WriteLine("Please enter your config's code, then press F10 for single commands, and F9 for config.\nType switch if you wish to swap.\n" +
                 "Full list of commands and how to get your code on http://consol.cf\n" +
+                 "Need help? Enter 0000, Press F10 then type: help\n" +
                 "Enter code Here: ");
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            string custom;
             Console.WriteLine("Please press F10 if you wish to enter single commands, or F9 if you wish to use your config.\nYou can later switch by typing switch into the console");
-            int cVersion = 4;
+            int cVersion = 5;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -171,11 +171,6 @@ namespace BO2_Console
                 {
                     debug = false;
                 }
-                //if (keyinfo.Key == ConsoleKey.F11)
-                //{
-                //beta = true;
-                //}
-                //http://odyisland.team/i/jjpr.png
                 if (cVersion < oVersion)
                 {
                     Process.Start("http://consol.cf/update.php");
@@ -196,6 +191,15 @@ namespace BO2_Console
                         else if (cmd == "night")
                         {
                             p.Send(night);
+                        }
+                        else if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//commands//" + cmd + ".solcom"))
+                        {
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = cmd + ".solcom";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            string chirag = File.ReadAllText(Path.Combine(yourDirectory, cmd + ".solcom"));
+                            p.Send(chirag);
                         }
                         else if (cmd == "fps 300")
                         {
@@ -229,6 +233,88 @@ namespace BO2_Console
                         {
                             p.Send(greensky);
                         }
+                        else if (cmd == "exec")
+                        {
+                            WebConfigReader conf =
+                            new WebConfigReader(urlprefix + url + urlsuffix);
+                            string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                            foreach (string s in tokens)
+                                p.Send(s);
+                        }
+                        else if (cmd == "e")
+                        {
+                            WebConfigReader conf =
+                            new WebConfigReader(urlprefix + url + urlsuffix);
+                            string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                            foreach (string s in tokens)
+                                p.Send(s);
+                        }
+                        else if (cmd == "help")
+                        {
+                            Process.Start("http://consol.cf/tutorial.php");
+                        }
+                        else if (cmd == "ingame")
+                            //this currenly works, all thats needed is the ability to enter a command to stop loop.
+                        {
+
+                            
+                            Console.WriteLine("Press F11 to enter config even while tabbed out. Press F12 to go back to normal.");
+                            
+                                for (; ; )
+                            { 
+                                    WebConfigReader conf =
+                                new WebConfigReader(urlprefix + url + urlsuffix);
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                                {
+                                    Console.WriteLine("Press enter to confirm");
+                                    cmd = Console.ReadLine();
+                                    if (cmd == "")
+                                    {
+                                        Application.Restart();
+                                        System.Environment.Exit(1);
+                                    }
+                                }
+
+                                    if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                    {
+                                    string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                                    foreach (string s in tokens)
+                                    {
+                                        p.Send(s);
+                                    }
+                                    debug = !debug;
+                                    Task.Delay(300);
+                                }
+
+                                Task.Delay(100);
+                            }
+                        }
+                        else if (cmd == "custom")
+                        {
+                            Console.WriteLine("Please enter your command like this: cmd1; cmd2; cmd3");
+                            string customcmd = Console.ReadLine();
+                            Console.WriteLine("Please name your command");
+                            string cmdname = Console.ReadLine();
+                            Console.WriteLine("Thank you, press enter to confirm");
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = Console.ReadLine() + ".solcom";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            if (!Directory.Exists(existingFilePath))
+                            {
+                                Directory.CreateDirectory(existingFilePath);
+                            }
+
+                            if (File.Exists(fullFilePath))
+                            {
+                                MessageBox.Show("Cannot create a command that already exists!", "CONSOL");
+                            }
+
+                            if (!File.Exists(fullFilePath))
+                            {
+                                File.WriteAllText(Path.Combine(yourDirectory, cmdname + ".solcom"), customcmd);
+                            }
+                        }
                     }
                     else
                     {
@@ -253,27 +339,7 @@ namespace BO2_Console
 }
 
 
-//else
-//{
-//Console.WriteLine("Press f11 to enter config and back to manual command");
 
-//WebConfigReader conf =
-//new WebConfigReader(url);
-
-//if (Convert.ToBoolean((long) GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-//{
-//string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
-//foreach (string s in tokens)
-//{
-//p.Send(s);
-//}
-
-//debug = !debug;
-//Task.Delay(300);
-//}
-
-//Task.Delay(100);
-//}
 
 
 
