@@ -47,10 +47,32 @@ namespace BO2_Console
             string commandAsString = new WebClient().DownloadString(link);
             return int.Parse(commandAsString);
         }
-    }
-
+    } 
     class Program
     {
+        static void uninstall()
+        {
+            string app_name = Application.StartupPath + "\\" + Application.ProductName + ".exe";
+            string bat_name = app_name + ".bat";
+
+            string bat = "@echo off\n"
+                + ":loop\n"
+                + "del \"" + app_name + "\"\n"
+                + "if Exist \"" + app_name + "\" GOTO loop\n"
+                + "del %0";
+
+            StreamWriter file = new StreamWriter(bat_name);
+            file.Write(bat);
+            file.Close();
+
+            Process bat_call = new Process();
+            bat_call.StartInfo.FileName = bat_name;
+            bat_call.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            bat_call.StartInfo.UseShellExecute = true;
+            bat_call.Start();
+
+            Application.Exit();
+        }
         [DllImport("User32.dll")]
         public static extern short GetAsyncKeyState(System.Windows.Forms.Keys vKey);
 
@@ -87,28 +109,28 @@ namespace BO2_Console
             string hud = "hud_health_pulserate_critical 0\n " +
                 "hud_health_pulserate_injured 0\n" +
                 "hud_health_startpulse_critical 0\n" +
-"hud_health_startpulse_injured 0\n" +
-"hud_healthOverlay_phaseEnd_pulseDuration 0\n" +
-"hud_healthOverlay_phaseEnd_toAlpha 0\n" +
-"hud_healthOverlay_phaseOne_pulseDuration 0\n" +
-"hud_healthOverlay_phaseThree_pulseDuration 0\n" +
-"hud_healthOverlay_phaseThree_toAlphaMultiplier 0\n" +
-"hud_healthOverlay_phaseTwo_pulseDuration 0\n" +
-"hud_healthOverlay_phaseTwo_toAlphaMultiplier 0\n" +
-"hud_healthOverlay_pulseStart 0\n" +
-"hud_healthOverlay_regenPauseTime 0\n" +
-"r_blur 0\n" +
-"r_detail 1\n" +
-"r_distortion 1\n" +
-"r_drawWater 1\n" +
-"r_forceLod 0\n" +
-"r_lodBiasRigid - 1000\n" +
-"r_lodBiasSkinned - 1000\n" +
-"r_lodScaleRigid 1\n" +
-"r_lodScaleSkinned 1\n" +
-"r_normalMap 1\n" +
-"r_rendererinuse shader model 3.0\n" +
-"r_rendererPreference shader model 3.0";
+                "hud_health_startpulse_injured 0\n" +
+                "hud_healthOverlay_phaseEnd_pulseDuration 0\n" +
+                "hud_healthOverlay_phaseEnd_toAlpha 0\n" +
+                "hud_healthOverlay_phaseOne_pulseDuration 0\n" +
+                "hud_healthOverlay_phaseThree_pulseDuration 0\n" +
+                "hud_healthOverlay_phaseThree_toAlphaMultiplier 0\n" +
+                "hud_healthOverlay_phaseTwo_pulseDuration 0\n" +
+                "hud_healthOverlay_phaseTwo_toAlphaMultiplier 0\n" +
+                "hud_healthOverlay_pulseStart 0\n" +
+                "hud_healthOverlay_regenPauseTime 0\n" +
+                "r_blur 0\n" +
+                "r_detail 1\n" +
+                "r_distortion 1\n" +
+                "r_drawWater 1\n" +
+                "r_forceLod 0\n" +
+                "r_lodBiasRigid - 1000\n" +
+                "r_lodBiasSkinned - 1000\n" +
+                "r_lodScaleRigid 1\n" +
+                "r_lodScaleSkinned 1\n" +
+                "r_normalMap 1\n" +
+                "r_rendererinuse shader model 3.0\n" +
+                "r_rendererPreference shader model 3.0";
             string green = "r_modellimit 0 \n" + "r_skipPvs 1\n" + "r_lockPvs .875\n" + "r_bloomTweaks 1\n" +
                  "r_bloomHiQuality 0\n" +
                 "r_clearColor 0 1 0 0\n" +
@@ -173,7 +195,8 @@ namespace BO2_Console
                 }
                 if (cVersion < oVersion)
                 {
-                    Process.Start("http://consol.cf/update.php");
+                    Process.Start("https://consol.cf/update.php");
+                    uninstall();
                     return;
                 }
                 for (; ; )
@@ -253,17 +276,21 @@ namespace BO2_Console
                         {
                             Process.Start("http://consol.cf/tutorial.php");
                         }
+                        else if (cmd == "commands")
+                        {
+                            Process.Start("http://consol.cf/commands.php");
+                        }
                         else if (cmd == "ingame")
-                            //this currenly works, all thats needed is the ability to enter a command to stop loop.
+                        //this currenly works, all thats needed is the ability to enter a command to stop loop.
                         {
 
-                            
+
                             Console.WriteLine("Press F11 to enter config even while tabbed out. Press F12 to go back to normal.");
-                            
-                                for (; ; )
-                            { 
-                                    WebConfigReader conf =
-                                new WebConfigReader(urlprefix + url + urlsuffix);
+
+                            for (; ; )
+                            {
+                                WebConfigReader conf =
+                            new WebConfigReader(urlprefix + url + urlsuffix);
                                 if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                                 {
                                     Console.WriteLine("Press enter to confirm");
@@ -275,8 +302,8 @@ namespace BO2_Console
                                     }
                                 }
 
-                                    if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-                                    {
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
                                     string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                                     foreach (string s in tokens)
                                     {
