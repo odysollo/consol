@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sol's BO2 Console")]
+[assembly: AssemblyTitle("CONSOL CLI Version")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Web based BO2 Console")]
+[assembly: AssemblyProduct("Simple and effective BO2 Console")]
 [assembly: AssemblyCopyright("Copyright © Odyssey 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

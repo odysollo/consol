@@ -204,7 +204,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 7;
+            int cVersion = 8;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -299,7 +299,17 @@ namespace BO2_Console
                         p.Send(streamsfps);
                         Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
-                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press F12 to stop.\nAll recordings will be saved to your documents folder, named regular and green.\nDo NOT tab out of your game while recording.");
+                        string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
+                        string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
+                        if (!Directory.Exists(folder1))
+                        {
+                            Directory.CreateDirectory(folder1);
+                        }
+                        if (!Directory.Exists(folder2))
+                        {
+                            Directory.CreateDirectory(folder2);
+                        }
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the windos to stop.\nPlease start the recoring WHILE the demo is playing\nAll recordings will be saved to your documents folder, named regular and green.\nDo NOT tab out of your game while recording.");
                         Bitmap memoryImage;
                         memoryImage = new Bitmap(xres, yres);
                         Size s = new Size(memoryImage.Width, memoryImage.Height);
@@ -307,10 +317,7 @@ namespace BO2_Console
                         {
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                             {
-                                SendKeys.Send("{ALT} + {TAB}");
-                                Application.Restart();
-                                System.Environment.Exit(1);
-
+                                break;
                             }
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
                             {
@@ -321,17 +328,22 @@ namespace BO2_Console
                                     string str = "";
                                     Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
                                     memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
-                                    str = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
-                                    $@"\green{i}.png");
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
+                                    $@"\regular{i}.png");
                                     memoryImage.Save(str);
                                     System.Threading.Thread.Sleep(200);
                                     p.Send(regular2);
                                     string str2 = "";
                                     Graphics memoryGraphics = Graphics.FromImage(memoryImage);
                                     memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
-                                    str2 = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
-                                    $@"\regular{i}.png");
+                                    str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
+                                    $@"\green{i}.png");
                                     memoryImage.Save(str2);
+                                    System.Threading.Thread.Sleep(200);
+                                    SendKeys.SendWait(" ");
+                                    p.Send(greenscreen);
+                                    System.Threading.Thread.Sleep(200);
+                                    p.Send(regular2);
                                     System.Threading.Thread.Sleep(200);
                                 }
                             }
