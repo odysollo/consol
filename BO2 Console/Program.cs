@@ -309,7 +309,7 @@ namespace BO2_Console
                         {
                             Directory.CreateDirectory(folder2);
                         }
-                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the windos to stop.\nPlease start the recoring WHILE the demo is playing\nAll recordings will be saved to your documents folder, named regular and green.\nDo NOT tab out of your game while recording.");
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the windos to stop.\nPlease start the recoring WHILE the demo is playing\nAll recordings will be saved to two folders in your exe's directory, named regular and green.\nDo NOT tab out of your game while recording.");
                         Bitmap memoryImage;
                         memoryImage = new Bitmap(xres, yres);
                         Size s = new Size(memoryImage.Width, memoryImage.Height);
