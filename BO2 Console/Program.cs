@@ -50,6 +50,22 @@ namespace BO2_Console
     }
     class Program
     {
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetDesktopWindow();
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Rect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
         static void uninstall()
         {
             string app_name = Application.StartupPath + "\\" + Application.ProductName + ".exe";
@@ -81,7 +97,6 @@ namespace BO2_Console
 
         [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         public static extern long GetAsyncKeyState(long vKey);
-
         static void Main(string[] args)
         {
             var p = new BO2();
@@ -130,7 +145,7 @@ namespace BO2_Console
                 "r_normalMap 1\n" +
                 "r_rendererinuse shader model 3.0\n" +
                 "r_rendererPreference shader model 3.0";
-            string green = "r_modellimit 0 \n" + "r_skipPvs 1\n" + "r_lockPvs .875\n" + "r_bloomTweaks 1\n" +
+            string greenscreen = "r_modellimit 0 \n" + "r_skipPvs 1\n" + "r_lockPvs .875\n" + "r_bloomTweaks 1\n" +
                  "r_bloomHiQuality 0\n" +
                 "r_clearColor 0 1 0 0\n" +
                 "r_clearColor2 0 1 0 0\n" +
@@ -144,7 +159,7 @@ namespace BO2_Console
                  "r_glow 0\n" +
                  "r_glow_allowed 0\n" +
                  "r_seethru_decal_enable 0\n" +
-                 "r_drawdecals 0\n";
+                 "r_drawdecals 0\n" + "cg_drawgun 1";
             string regular = "r_modellimit 1000\n" +
                 "r_skipPvs 0\n" +
                 "r_lockPvs 0\n" +
@@ -163,6 +178,24 @@ namespace BO2_Console
                 "r_glow_allowed 1\n" +
                 "r_seethru_decal_enable 1\n" +
                 "r_drawdecals 1\n";
+            string regular2 = "r_modellimit 1000\n" +
+    "r_skipPvs 0\n" +
+    "r_lockPvs 0\n" +
+    "r_clearColor 0 0 0 0\n" +
+    "r_clearColor2 0 0 0 0\n" +
+    "r_bloomTweaks 0\n" +
+    "r_bloomHiQuality 1\n" +
+    "r_znear 10000\n" +
+    "r_zfar 0\n" +
+    "r_glow_allowed 1\n" +
+    "r_glowtweakbloomintensity 1\n" +
+    "r_glowtweakradius 1\n" +
+    "r_glowTweakEnable 1\n" +
+    "r_glowUseTweaks 1\n" +
+    "r_glow 1\n" +
+    "r_glow_allowed 1\n" +
+    "r_seethru_decal_enable 1\n" +
+    "r_drawdecals 1\n" + "cg_drawgun 0";
             string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
             Console.WriteLine("Please enter your config's code.\n" +
                 "Inorder to get your code, please upload your config on http://consol.cf\n" +
@@ -171,7 +204,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 6;
+            int cVersion = 7;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -230,7 +263,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "greenscreen")
                     {
-                        p.Send(green);
+                        p.Send(greenscreen);
                     }
                     else if (cmd == "regular")
                     {
@@ -239,6 +272,70 @@ namespace BO2_Console
                     else if (cmd == "greensky")
                     {
                         p.Send(greensky);
+                    }
+                    else if (cmd == "streams")
+                    {
+                        string streamsfps = "";
+                        Console.WriteLine("Hello, thank you for testing out the streams beta.");
+                        Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
+                        Console.WriteLine("X:");
+                        int xres = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Y:");
+                        int yres = Convert.ToInt32(Console.ReadLine());
+                        //Console.WriteLine("Please enter the command you would like to use for the first stream (i.e. greenscreen, or a custom command)");
+                        //string streamscmd1 = Console.ReadLine();
+                        //Console.WriteLine("Now the second (i.e. regular, or a custom command)");
+                        //string streamscmd2 = Console.ReadLine();
+                        Console.WriteLine("What fps would you like to record at? Enter low for a faster recording, and high for a slow but higher fps one.");
+                        string whatone = Console.ReadLine();
+                        if (whatone == "low")
+                        {
+                            streamsfps = "com_maxfps 30\n" + "timescale 0.01";
+                        }
+                        else if (whatone == "high")
+                        {
+                            streamsfps = "com_maxfps 10\n" + "timescale 0.01";
+                        }
+                        p.Send(streamsfps);
+                        Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
+                        Console.ReadLine();
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press F12 to stop.\nAll recordings will be saved to your documents folder, named regular and green.\nDo NOT tab out of your game while recording.");
+                        Bitmap memoryImage;
+                        memoryImage = new Bitmap(xres, yres);
+                        Size s = new Size(memoryImage.Width, memoryImage.Height);
+                        for (; ; )
+                        {
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                            {
+                                SendKeys.Send("{ALT} + {TAB}");
+                                Application.Restart();
+                                System.Environment.Exit(1);
+
+                            }
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                            {
+                                for (var i = 0; ; i++)
+                                {
+                                    SendKeys.SendWait(" ");
+                                    p.Send(greenscreen);
+                                    string str = "";
+                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
+                                    $@"\green{i}.png");
+                                    memoryImage.Save(str);
+                                    System.Threading.Thread.Sleep(200);
+                                    p.Send(regular2);
+                                    string str2 = "";
+                                    Graphics memoryGraphics = Graphics.FromImage(memoryImage);
+                                    memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
+                                    str2 = string.Format(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
+                                    $@"\regular{i}.png");
+                                    memoryImage.Save(str2);
+                                    System.Threading.Thread.Sleep(200);
+                                }
+                            }
+                        }
                     }
                     else if (cmd == "exec")
                     {
@@ -459,10 +556,6 @@ class BO2
             callbytes = BitConverter.GetBytes(cbuf_address);
             if (command == "")
             {
-                //Console.WriteLine("Please enter your config's url");
-                //string url = Console.ReadLine();
-                //Console.WriteLine("Press enter to execute config");
-                //Console.ReadLine();
             }
             else
             {
