@@ -204,7 +204,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 8;
+            int cVersion = 9;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -276,7 +276,7 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
-                        Console.WriteLine("Hello, thank you for testing out the streams beta.");
+                        Console.WriteLine("Hello, thank you for testing out the streams beta. Please note, your PC must be able to run the game at atleast 10 FPS to use.");
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
@@ -286,21 +286,12 @@ namespace BO2_Console
                         //string streamscmd1 = Console.ReadLine();
                         //Console.WriteLine("Now the second (i.e. regular, or a custom command)");
                         //string streamscmd2 = Console.ReadLine();
-                        Console.WriteLine("What fps would you like to record at? Enter low for a faster recording, and high for a slow but higher fps one.");
-                        string whatone = Console.ReadLine();
-                        if (whatone == "low")
-                        {
-                            streamsfps = "com_maxfps 30\n" + "timescale 0.01";
-                        }
-                        else if (whatone == "high")
-                        {
-                            streamsfps = "com_maxfps 10\n" + "timescale 0.01";
-                        }
-                        p.Send(streamsfps);
                         Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
                         string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
+                        streamsfps = "com_maxfps 10\n" + "timescale 0.01";
+                        p.Send(streamsfps);
                         if (!Directory.Exists(folder1))
                         {
                             Directory.CreateDirectory(folder1);
@@ -340,11 +331,84 @@ namespace BO2_Console
                                     $@"\green{i}.png");
                                     memoryImage.Save(str2);
                                     System.Threading.Thread.Sleep(200);
+                                    p.Send(regular2);
+                                    string str2 = "";
+                                    Graphics memoryGraphics = Graphics.FromImage(memoryImage);
+                                    memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
+                                    str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
+                                    $@"\green{i}.png");
+                                    memoryImage.Save(str2);
+                                    System.Threading.Thread.Sleep(200);
                                     SendKeys.SendWait(" ");
                                     p.Send(greenscreen);
                                     System.Threading.Thread.Sleep(200);
                                     p.Send(regular2);
                                     System.Threading.Thread.Sleep(200);
+                                    SendKeys.SendWait("K");
+                                    System.Threading.Thread.Sleep(200);
+                                }
+                            }
+                        }
+                    }
+                    else if (cmd == "avidemo")
+                    {
+                        Console.WriteLine("Hello, thank you for using AVI demo. Please note, your PC must be able to run the game at atleast 6 FPS to use. 600 fps footage will be produced.\nThis also works with cines!");
+                        Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
+                        Console.WriteLine("X:");
+                        int xres = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Y:");
+                        int yres = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("What fps would you like to record at? 300, 600, or 1000?\nUse 300 if your pc can get 3 fps, 600 for 6, and 1000 for 10.");
+                        string avifps = Console.ReadLine();
+                        if (avifps == "300")
+                        {
+                            avifps = "com_maxfps 3\n" + "timescale 0.01";
+                        }
+                        else if  (avifps == "600")
+                        {
+                            avifps = "com_maxfps 6\n" + "timescale 0.01";
+                        }
+                        else if (avifps == "1000")
+                        {
+                            avifps = "com_maxfps 10\n" + "timescale 0.01";
+                        }
+                        Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
+                        Console.ReadLine();
+                        string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//";
+                        p.Send(avifps);
+                        if (!Directory.Exists(folder1))
+                        {
+                            Directory.CreateDirectory(folder1);
+                        }
+                        else if (Directory.Exists(folder1))
+                        {
+                            Directory.CreateDirectory(folder1);
+                        }
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close CONSOL to stop.\nPlease start the recording while the demo is PLAYING\nAll recordings will be saved to a folder in your exe's directory, named avidemo.\nOnce done recording, please rename the 'avidemo' folder if you wish to record again.\nDo NOT tab out of your game while recording.");
+                        Bitmap memoryImage;
+                        memoryImage = new Bitmap(xres, yres);
+                        Size s = new Size(memoryImage.Width, memoryImage.Height);
+                        WebConfigReader conf =
+                        new WebConfigReader(urlprefix + url + urlsuffix);
+                        string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                        foreach (string s2 in tokens)
+                            for (; ; )
+                        {
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                            {
+                                break;
+                            }
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                            {
+                                for (var i = 0; ; i++)
+                                {
+                                    p.Send(s2);
+                                    string str = "";
+                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
+                                    $@"\avidemo{i}.png");
+                                    memoryImage.Save(str);
                                 }
                             }
                         }
