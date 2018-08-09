@@ -75,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalKeyboardHook.cs" />
+    <Compile Include="GMFog.cs" />
+    <Compile Include="ProcessMemory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

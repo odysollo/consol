@@ -97,6 +97,10 @@ namespace BO2_Console
 
         [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         public static extern long GetAsyncKeyState(long vKey);
+
+        public static ProcessMemory processMemory;
+        public static GMFog gmFog;
+
         static void Main(string[] args)
         {
             var p = new BO2();
@@ -197,6 +201,33 @@ namespace BO2_Console
     "r_seethru_decal_enable 1\n" +
     "r_drawdecals 1\n" + "cg_drawgun 0";
             string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
+            string depth = "r_Dof_Enable 0\n" +
+                "r_dof_bias 0\n" +
+                "r_dof_farBlur 0\n" +
+                "r_dof_farEnd 5\n" +
+                "r_dof_farStart 0\n" +
+                 "r_dof_nearBlur 0\n" +
+                "r_dof_nearEnd 0\n" +
+                "r_dof_nearStart 0\n" +
+                "r_dof_tweak 1\n" +
+                "r_dof_tweak_enable 1\n" +
+                "r_enablePlayerShadow 0\n" +
+                "r_exposureTweak 1\n" +
+                "r_exposureValue 16\n" +
+                "r_sky_intensity_factor 0\n" +
+                "r_modellimit 40\n" +
+                "r_clearcolor 1 1 1 0\n" +
+                "r_clearcolor2 1 1 1 0\n" +
+                "r_bloomtweaks 1";
+            string depthoff = "cg_draw2d 1\n " +
+                "r_enablePlayerShadow 0\n " +
+                "r_exposureTweak 0\n " +
+                "r_exposureValue 12.5\n " +
+                "r_sky_intensity_factor 1\n " +
+                "r_modellimit 1024\n " +
+                "r_clearcolor 1 1 1 0\n " +
+                "r_clearcolor2 1 1 1 0\n " +
+                "r_bloomtweaks 0";
             Console.WriteLine("Please enter your config's code.\n" +
                 "Inorder to get your code, please upload your config on http://consol.cf\n" +
                 "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
@@ -260,6 +291,20 @@ namespace BO2_Console
                     else if (cmd == "hud")
                     {
                         p.Send(hud);
+                    }
+                    else if (cmd == "depth")
+                    {
+                        p.Send(depth);
+                    }
+                    else if (cmd == "fogdist")
+                    {
+                        Console.WriteLine("Please enter fog distance");
+                        float dist = float.Parse(Console.ReadLine());
+                        gmFog.FogStartDist = dist;
+                    }
+                    else if (cmd == "depthoff")
+                    {
+                        p.Send(depthoff);
                     }
                     else if (cmd == "greenscreen")
                     {
@@ -331,20 +376,10 @@ namespace BO2_Console
                                     $@"\green{i}.png");
                                     memoryImage.Save(str2);
                                     System.Threading.Thread.Sleep(200);
-                                    p.Send(regular2);
-                                    string str2 = "";
-                                    Graphics memoryGraphics = Graphics.FromImage(memoryImage);
-                                    memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
-                                    str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
-                                    $@"\green{i}.png");
-                                    memoryImage.Save(str2);
-                                    System.Threading.Thread.Sleep(200);
                                     SendKeys.SendWait(" ");
                                     p.Send(greenscreen);
                                     System.Threading.Thread.Sleep(200);
                                     p.Send(regular2);
-                                    System.Threading.Thread.Sleep(200);
-                                    SendKeys.SendWait("K");
                                     System.Threading.Thread.Sleep(200);
                                 }
                             }
@@ -364,7 +399,7 @@ namespace BO2_Console
                         {
                             avifps = "com_maxfps 3\n" + "timescale 0.01";
                         }
-                        else if  (avifps == "600")
+                        else if (avifps == "600")
                         {
                             avifps = "com_maxfps 6\n" + "timescale 0.01";
                         }
@@ -393,25 +428,25 @@ namespace BO2_Console
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s2 in tokens)
                             for (; ; )
-                        {
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                             {
-                                break;
-                            }
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-                            {
-                                for (var i = 0; ; i++)
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                                 {
-                                    p.Send(s2);
-                                    string str = "";
-                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
-                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
-                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
-                                    $@"\avidemo{i}.png");
-                                    memoryImage.Save(str);
+                                    break;
+                                }
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
+                                    for (var i = 0; ; i++)
+                                    {
+                                        p.Send(s2);
+                                        string str = "";
+                                        Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                        str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
+                                        $@"\avidemo{i}.png");
+                                        memoryImage.Save(str);
+                                    }
                                 }
                             }
-                        }
                     }
                     else if (cmd == "exec")
                     {
@@ -707,5 +742,7 @@ class BO2
         hProcess = OpenProcess(ProcessAccessFlags.All, false, dwPID);
         int nopBytesLength = nopBytes.Length;
         WriteProcessMemory(hProcess, (IntPtr)nop_address, nopBytes, nopBytes.Length, out nopBytesLength);
+        Program.processMemory = new ProcessMemory(hProcess);
+        Program.gmFog = new GMFog(Program.processMemory);
     }
 }
