@@ -426,7 +426,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 12;
+            int cVersion = 13;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -691,7 +691,7 @@ namespace BO2_Console
                                     A2 = 103;
                                     gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
                                     p.Send(depth);
-                                    System.Threading.Thread.Sleep(5);
+                                    System.Threading.Thread.Sleep(166);
                                     string str4 = "";
                                     Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
                                     memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
