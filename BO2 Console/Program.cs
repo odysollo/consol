@@ -16,6 +16,197 @@ using System.Threading.Tasks;
 using System.IO;
 namespace BO2_Console
 {
+    class BO2
+    {
+        #region Mem Functions & Defines
+
+        [Flags]
+        public enum ProcessAccessFlags : uint
+        {
+            All = 0x001F0FFF,
+            Terminate = 0x00000001,
+            CreateThread = 0x00000002,
+            VirtualMemoryOperation = 0x00000008,
+            VirtualMemoryRead = 0x00000010,
+            VirtualMemoryWrite = 0x00000020,
+            DuplicateHandle = 0x00000040,
+            CreateProcess = 0x000000080,
+            SetQuota = 0x00000100,
+            SetInformation = 0x00000200,
+            QueryInformation = 0x00000400,
+            QueryLimitedInformation = 0x00001000,
+            Synchronize = 0x00100000,
+        }
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, int processId);
+
+        [Flags]
+        public enum FreeType
+        {
+            Decommit = 0x4000,
+            Release = 0x8000,
+        }
+
+        [Flags]
+        public enum AllocationType
+        {
+            Commit = 0x1000,
+            Reserve = 0x2000,
+            Decommit = 0x4000,
+            Release = 0x8000,
+            Reset = 0x80000,
+            Physical = 0x400000,
+            TopDown = 0x100000,
+            WriteWatch = 0x200000,
+            LargePages = 0x20000000
+        }
+
+        [Flags]
+        public enum MemoryProtection
+        {
+            Execute = 0x10,
+            ExecuteRead = 0x20,
+            ExecuteReadWrite = 0x40,
+            ExecuteWriteCopy = 0x80,
+            NoAccess = 0x01,
+            ReadOnly = 0x02,
+            ReadWrite = 0x04,
+            WriteCopy = 0x08,
+            GuardModifierflag = 0x100,
+            NoCacheModifierflag = 0x200,
+            WriteCombineModifierflag = 0x400
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize,
+            AllocationType flAllocationType, MemoryProtection flProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize,
+            out int lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, FreeType dwFreeType);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize,
+            IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
+
+        public byte[] cbuf_addtext_wrapper =
+        {
+            0x55,
+            0x8B, 0xEC,
+            0x83, 0xEC, 0x8,
+            0xC7, 0x45, 0xF8, 0x0, 0x0, 0x0, 0x0,
+            0xC7, 0x45, 0xFC, 0x0, 0x0, 0x0, 0x0,
+            0xFF, 0x75, 0xF8,
+            0x6A, 0x0,
+            0xFF, 0x55, 0xFC,
+            0x83, 0xC4, 0x8,
+            0x8B, 0xE5,
+            0x5D,
+            0xC3
+        };
+
+        IntPtr hProcess = IntPtr.Zero;
+        int dwPID = -1;
+        uint cbuf_address;
+        uint nop_address;
+        byte[] callbytes;
+        IntPtr cbuf_addtext_alloc = IntPtr.Zero;
+        byte[] commandbytes;
+        IntPtr commandaddress;
+        byte[] nopBytes = { 0x90, 0x90 };
+
+        #endregion
+
+        public void Send(string command)
+        {
+            try
+            {
+                callbytes = BitConverter.GetBytes(cbuf_address);
+                if (command == "")
+                {
+                }
+                else
+                {
+                    if (cbuf_addtext_alloc == IntPtr.Zero)
+                    {
+                        cbuf_addtext_alloc = VirtualAllocEx(hProcess, IntPtr.Zero,
+                            (IntPtr)cbuf_addtext_wrapper.Length,
+                            AllocationType.Commit | AllocationType.Reserve, MemoryProtection.ExecuteReadWrite);
+                        commandbytes = System.Text.Encoding.ASCII.GetBytes(command);
+                        commandaddress = VirtualAllocEx(hProcess, IntPtr.Zero, (IntPtr)(commandbytes.Length),
+                            AllocationType.Commit | AllocationType.Reserve, MemoryProtection.ExecuteReadWrite);
+                        int bytesWritten = 0;
+                        int bytesWritten2 = commandbytes.Length;
+                        WriteProcessMemory(hProcess, commandaddress, commandbytes, commandbytes.Length,
+                            out bytesWritten2);
+
+                        Array.Copy(BitConverter.GetBytes(commandaddress.ToInt64()), 0, cbuf_addtext_wrapper, 9, 4);
+                        Array.Copy(callbytes, 0, cbuf_addtext_wrapper, 16, 4);
+
+                        WriteProcessMemory(hProcess, cbuf_addtext_alloc, cbuf_addtext_wrapper,
+                            cbuf_addtext_wrapper.Length, out bytesWritten);
+
+                        IntPtr bytesOut;
+                        CreateRemoteThread(hProcess, IntPtr.Zero, 0, cbuf_addtext_alloc, IntPtr.Zero, 0,
+                            out bytesOut);
+
+                        if (cbuf_addtext_alloc != IntPtr.Zero && commandaddress != IntPtr.Zero)
+                        {
+                            VirtualFreeEx(hProcess, cbuf_addtext_alloc, cbuf_addtext_wrapper.Length,
+                                FreeType.Release);
+                            VirtualFreeEx(hProcess, commandaddress, cbuf_addtext_wrapper.Length, FreeType.Release);
+                        }
+                    }
+
+                    cbuf_addtext_alloc = IntPtr.Zero;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error");
+                Console.ReadLine();
+            }
+        }
+
+        public void FindGame()
+        {
+            if (Process.GetProcessesByName("t6mp").Length != 0)
+            {
+                cbuf_address = 0x5BDF70;
+                nop_address = 0x8C90DA;
+                dwPID = Process.GetProcessesByName("t6mp")[0].Id;
+            }
+            else if (Process.GetProcessesByName("t6zm").Length != 0)
+            {
+                cbuf_address = 0x4C7120;
+                nop_address = 0x8C768A;
+                dwPID = Process.GetProcessesByName("t6zm")[0].Id;
+            }
+            else if (Process.GetProcessesByName("t6mpv43").Length != 0)
+            {
+                cbuf_address = 0x5BDF70;
+                nop_address = 0x8C90DA;
+                dwPID = Process.GetProcessesByName("t6mpv43")[0].Id;
+            }
+            else
+            {
+                cbuf_address = 0x0;
+                nop_address = 0x0;
+                Console.WriteLine("No game found.");
+                Console.ReadLine();
+            }
+
+            hProcess = OpenProcess(ProcessAccessFlags.All, false, dwPID);
+            int nopBytesLength = nopBytes.Length;
+            WriteProcessMemory(hProcess, (IntPtr)nop_address, nopBytes, nopBytes.Length, out nopBytesLength);
+            Program.processMemory = new ProcessMemory(hProcess);
+            Program.gmFog = new GMFog(Program.processMemory);
+        }
+    }
     public class WebConfigReader
     {
         private static string link = "";
@@ -97,6 +288,10 @@ namespace BO2_Console
 
         [DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         public static extern long GetAsyncKeyState(long vKey);
+
+        public static ProcessMemory processMemory;
+        public static GMFog gmFog;
+
         static void Main(string[] args)
         {
             var p = new BO2();
@@ -197,6 +392,33 @@ namespace BO2_Console
     "r_seethru_decal_enable 1\n" +
     "r_drawdecals 1\n" + "cg_drawgun 0";
             string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
+            string depth = "r_Dof_Enable 0\n" +
+                "r_dof_bias 0\n" +
+                "r_dof_farBlur 0\n" +
+                "r_dof_farEnd 5\n" +
+                "r_dof_farStart 0\n" +
+                 "r_dof_nearBlur 0\n" +
+                "r_dof_nearEnd 0\n" +
+                "r_dof_nearStart 0\n" +
+                "r_dof_tweak 1\n" +
+                "r_dof_tweak_enable 1\n" +
+                "r_enablePlayerShadow 0\n" +
+                "r_exposureTweak 1\n" +
+                "r_exposureValue 16\n" +
+                "r_sky_intensity_factor 0\n" +
+                "r_modellimit 40\n" +
+                "r_clearcolor 1 1 1 0\n" +
+                "r_clearcolor2 1 1 1 0\n" +
+                "r_bloomtweaks 1";
+            string depthoff = "cg_draw2d 1\n " +
+                "r_enablePlayerShadow 0\n " +
+                "r_exposureTweak 0\n " +
+                "r_exposureValue 12.5\n " +
+                "r_sky_intensity_factor 1\n " +
+                "r_modellimit 1024\n " +
+                "r_clearcolor 1 1 1 0\n " +
+                "r_clearcolor2 1 1 1 0\n " +
+                "r_bloomtweaks 0";
             Console.WriteLine("Please enter your config's code.\n" +
                 "Inorder to get your code, please upload your config on http://consol.cf\n" +
                 "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
@@ -204,7 +426,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 9;
+            int cVersion = 12;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -261,6 +483,98 @@ namespace BO2_Console
                     {
                         p.Send(hud);
                     }
+                    else if (cmd == "depth")
+                    {
+                        float dist = 0;
+                        gmFog.FogStartDist = dist;
+                        float dist2 = 2500;
+                        gmFog.FogFadeDist = dist2;
+                        float dist3 = 20000;
+                        gmFog.FogHeightDist = dist3;
+                        float dist4 = 1;
+                        gmFog.FogBiasDist = dist4;
+                        float R = 1000;
+                        float G = 1000;
+                        float B = 1000;
+                        float A = 100;
+                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                        float R2 = 1000;
+                        float G2 = 1000;
+                        float B2 = 1000;
+                        float A2 = 103;
+                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                        p.Send(depth);
+                    }
+                    else if (cmd == "fogdist")
+                    {
+                        Console.WriteLine("Please enter fog distance");
+                        float dist = float.Parse(Console.ReadLine());
+                        gmFog.FogStartDist = dist;
+                    }
+                    else if (cmd == "fogfade")
+                    {
+                        Console.WriteLine("Please enter fog fade distance");
+                        float dist = float.Parse(Console.ReadLine());
+                        gmFog.FogFadeDist = dist;
+                    }
+                    else if (cmd == "fogheight")
+                    {
+                        Console.WriteLine("Please enter fog height");
+                        float dist = float.Parse(Console.ReadLine());
+                        gmFog.FogHeightDist = dist;
+                    }
+                    else if (cmd == "fogbias")
+                    {
+                        Console.WriteLine("Please enter fog bias");
+                        float dist = float.Parse(Console.ReadLine());
+                        gmFog.FogBiasDist = dist;
+                    }
+                    else if (cmd == "fogcolor")
+                    {
+                        Console.WriteLine("Please enter fog color RED");
+                        float R = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now green");
+                        float G = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now blue");
+                        float B = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now alpha");
+                        float A = float.Parse(Console.ReadLine());
+                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                    }
+                    else if (cmd == "fogfarcolor")
+                    {
+                        Console.WriteLine("Please enter fog far color RED");
+                        float R = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now green");
+                        float G = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now blue");
+                        float B = float.Parse(Console.ReadLine());
+                        Console.WriteLine("Now alpha");
+                        float A = float.Parse(Console.ReadLine());
+                        gmFog.FogFarColor = new ProcessMemory.Float4(R, G, B, A);
+                    }
+                    else if (cmd == "depthoff")
+                    {
+                        float dist = 200;
+                        gmFog.FogStartDist = dist;
+                        float dist2 = 36631;
+                        gmFog.FogFadeDist = dist2;
+                        float dist3 = 10702;
+                        gmFog.FogHeightDist = dist3;
+                        float dist4 = 199;
+                        gmFog.FogBiasDist = dist4;
+                        float R = 5;
+                        float G = 5;
+                        float B = 5;
+                        float A = 1;
+                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                        float R2 = 5;
+                        float G2 = 5;
+                        float B2 = 5;
+                        float A2 = 1;
+                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                        p.Send(depthoff);
+                    }
                     else if (cmd == "greenscreen")
                     {
                         p.Send(greenscreen);
@@ -276,7 +590,7 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
-                        Console.WriteLine("Hello, thank you for testing out the streams beta. Please note, your PC must be able to run the game at atleast 10 FPS to use.");
+                        Console.WriteLine("Hello, thank you for testing out the streams beta. Please note, your PC must be able to run the game at atleast 10 FPS to use.\nThis will be recorded to roughly 1000fps.");
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
@@ -290,8 +604,12 @@ namespace BO2_Console
                         Console.ReadLine();
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
                         string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
-                        streamsfps = "com_maxfps 10\n" + "timescale 0.01";
-                        p.Send(streamsfps);
+                        string folder3 = Path.GetDirectoryName(Application.ExecutablePath) + "//depth//";
+                        Console.WriteLine("What com_maxfps would you like? (recommended 10-30)");
+                        streamsfps = Console.ReadLine();
+                        Console.WriteLine("What timescale would you like? (recommended 0.03-0.05)");
+                        string streamstimescale = Console.ReadLine();
+                        p.Send("com_maxfps " + streamsfps + "\n" + "timescale " + streamstimescale);
                         if (!Directory.Exists(folder1))
                         {
                             Directory.CreateDirectory(folder1);
@@ -300,7 +618,11 @@ namespace BO2_Console
                         {
                             Directory.CreateDirectory(folder2);
                         }
-                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the windos to stop.\nPlease start the recoring WHILE the demo is playing\nAll recordings will be saved to two folders in your exe's directory, named regular and green.\nDo NOT tab out of your game while recording.");
+                        if (!Directory.Exists(folder3))
+                        {
+                            Directory.CreateDirectory(folder3);
+                        }
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the console. to stop.\nPlease start the recording WHILE the demo is playing\nAll recordings will be saved to three folders in your exe's directory, named regular, green, and depth.\nDo NOT tab out of your game while recording.");
                         Bitmap memoryImage;
                         memoryImage = new Bitmap(xres, yres);
                         Size s = new Size(memoryImage.Width, memoryImage.Height);
@@ -322,7 +644,26 @@ namespace BO2_Console
                                     str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
                                     $@"\regular{i}.png");
                                     memoryImage.Save(str);
-                                    System.Threading.Thread.Sleep(200);
+                                    System.Threading.Thread.Sleep(5);
+                                    float dist = 200;
+                                    gmFog.FogStartDist = dist;
+                                    float dist2 = 36631;
+                                    gmFog.FogFadeDist = dist2;
+                                    float dist3 = 10702;
+                                    gmFog.FogHeightDist = dist3;
+                                    float dist4 = 199;
+                                    gmFog.FogBiasDist = dist4;
+                                    float R = 5;
+                                    float G = 5;
+                                    float B = 5;
+                                    float A = 1;
+                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                    float R2 = 5;
+                                    float G2 = 5;
+                                    float B2 = 5;
+                                    float A2 = 1;
+                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                    p.Send(depthoff);
                                     p.Send(regular2);
                                     string str2 = "";
                                     Graphics memoryGraphics = Graphics.FromImage(memoryImage);
@@ -330,22 +671,56 @@ namespace BO2_Console
                                     str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
                                     $@"\green{i}.png");
                                     memoryImage.Save(str2);
-                                    System.Threading.Thread.Sleep(200);
-                                    p.Send(regular2);
-                                    string str2 = "";
-                                    Graphics memoryGraphics = Graphics.FromImage(memoryImage);
-                                    memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
-                                    str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
-                                    $@"\green{i}.png");
-                                    memoryImage.Save(str2);
-                                    System.Threading.Thread.Sleep(200);
+                                    System.Threading.Thread.Sleep(5);
+                                    dist = 0;
+                                    gmFog.FogStartDist = dist;
+                                    dist2 = 2500;
+                                    gmFog.FogFadeDist = dist2;
+                                    dist3 = 20000;
+                                    gmFog.FogHeightDist = dist3;
+                                    dist4 = 1;
+                                    gmFog.FogBiasDist = dist4;
+                                    R = 1000;
+                                    G = 1000;
+                                    B = 1000;
+                                    A = 100;
+                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                    R2 = 1000;
+                                    G2 = 1000;
+                                    B2 = 1000;
+                                    A2 = 103;
+                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                    p.Send(depth);
+                                    System.Threading.Thread.Sleep(5);
+                                    string str4 = "";
+                                    Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
+                                    str4 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//depth//" +
+                                    $@"\depth{i}.png");
+                                    memoryImage.Save(str4);
                                     SendKeys.SendWait(" ");
-                                    p.Send(greenscreen);
-                                    System.Threading.Thread.Sleep(200);
+                                    dist = 200;
+                                    gmFog.FogStartDist = dist;
+                                    dist2 = 36631;
+                                    gmFog.FogFadeDist = dist2;
+                                    dist3 = 10702;
+                                    gmFog.FogHeightDist = dist3;
+                                    dist4 = 199;
+                                    gmFog.FogBiasDist = dist4;
+                                    R = 5;
+                                    G = 5;
+                                    B = 5;
+                                    A = 1;
+                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                    R2 = 5;
+                                    G2 = 5;
+                                    B2 = 5;
+                                    A2 = 1;
+                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                    p.Send(depthoff);
                                     p.Send(regular2);
-                                    System.Threading.Thread.Sleep(200);
-                                    SendKeys.SendWait("K");
-                                    System.Threading.Thread.Sleep(200);
+                                    System.Threading.Thread.Sleep(250);
+
                                 }
                             }
                         }
@@ -358,24 +733,14 @@ namespace BO2_Console
                         int xres = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Y:");
                         int yres = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("What fps would you like to record at? 300, 600, or 1000?\nUse 300 if your pc can get 3 fps, 600 for 6, and 1000 for 10.");
+                        Console.WriteLine("What com_maxfps would you like to record at?");
                         string avifps = Console.ReadLine();
-                        if (avifps == "300")
-                        {
-                            avifps = "com_maxfps 3\n" + "timescale 0.01";
-                        }
-                        else if  (avifps == "600")
-                        {
-                            avifps = "com_maxfps 6\n" + "timescale 0.01";
-                        }
-                        else if (avifps == "1000")
-                        {
-                            avifps = "com_maxfps 10\n" + "timescale 0.01";
-                        }
+                        Console.WriteLine("What timescale would you like to record at?");
+                        string avitimescale = Console.ReadLine();
                         Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//";
-                        p.Send(avifps);
+                        p.Send("com_maxfps " + avifps + "\n" + "timescale " + avitimescale);
                         if (!Directory.Exists(folder1))
                         {
                             Directory.CreateDirectory(folder1);
@@ -392,26 +757,26 @@ namespace BO2_Console
                         new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s2 in tokens)
-                            for (; ; )
-                        {
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                            p.Send(s2);
+                        for (; ; )
                             {
-                                break;
-                            }
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-                            {
-                                for (var i = 0; ; i++)
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                                 {
-                                    p.Send(s2);
-                                    string str = "";
-                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
-                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
-                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
-                                    $@"\avidemo{i}.png");
-                                    memoryImage.Save(str);
+                                    break;
+                                }
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
+                                    for (var i = 0; ; i++)
+                                    {
+                                        string str = "";
+                                        Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                        str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
+                                        $@"\avidemo{i}.png");
+                                        memoryImage.Save(str);
+                                    }
                                 }
                             }
-                        }
                     }
                     else if (cmd == "exec")
                     {
@@ -511,201 +876,5 @@ namespace BO2_Console
                 }
             }
         }
-    }
-}
-
-
-
-
-
-
-
-class BO2
-{
-    #region Mem Functions & Defines
-
-    [Flags]
-    public enum ProcessAccessFlags : uint
-    {
-        All = 0x001F0FFF,
-        Terminate = 0x00000001,
-        CreateThread = 0x00000002,
-        VirtualMemoryOperation = 0x00000008,
-        VirtualMemoryRead = 0x00000010,
-        VirtualMemoryWrite = 0x00000020,
-        DuplicateHandle = 0x00000040,
-        CreateProcess = 0x000000080,
-        SetQuota = 0x00000100,
-        SetInformation = 0x00000200,
-        QueryInformation = 0x00000400,
-        QueryLimitedInformation = 0x00001000,
-        Synchronize = 0x00100000,
-    }
-
-    [DllImport("kernel32.dll")]
-    static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, int processId);
-
-    [Flags]
-    public enum FreeType
-    {
-        Decommit = 0x4000,
-        Release = 0x8000,
-    }
-
-    [Flags]
-    public enum AllocationType
-    {
-        Commit = 0x1000,
-        Reserve = 0x2000,
-        Decommit = 0x4000,
-        Release = 0x8000,
-        Reset = 0x80000,
-        Physical = 0x400000,
-        TopDown = 0x100000,
-        WriteWatch = 0x200000,
-        LargePages = 0x20000000
-    }
-
-    [Flags]
-    public enum MemoryProtection
-    {
-        Execute = 0x10,
-        ExecuteRead = 0x20,
-        ExecuteReadWrite = 0x40,
-        ExecuteWriteCopy = 0x80,
-        NoAccess = 0x01,
-        ReadOnly = 0x02,
-        ReadWrite = 0x04,
-        WriteCopy = 0x08,
-        GuardModifierflag = 0x100,
-        NoCacheModifierflag = 0x200,
-        WriteCombineModifierflag = 0x400
-    }
-
-    [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-    static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize,
-        AllocationType flAllocationType, MemoryProtection flProtect);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int nSize,
-        out int lpNumberOfBytesWritten);
-
-    [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-    static extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, FreeType dwFreeType);
-
-    [DllImport("kernel32.dll")]
-    static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize,
-        IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
-
-    public byte[] cbuf_addtext_wrapper =
-    {
-            0x55,
-            0x8B, 0xEC,
-            0x83, 0xEC, 0x8,
-            0xC7, 0x45, 0xF8, 0x0, 0x0, 0x0, 0x0,
-            0xC7, 0x45, 0xFC, 0x0, 0x0, 0x0, 0x0,
-            0xFF, 0x75, 0xF8,
-            0x6A, 0x0,
-            0xFF, 0x55, 0xFC,
-            0x83, 0xC4, 0x8,
-            0x8B, 0xE5,
-            0x5D,
-            0xC3
-        };
-
-    IntPtr hProcess = IntPtr.Zero;
-    int dwPID = -1;
-    uint cbuf_address;
-    uint nop_address;
-    byte[] callbytes;
-    IntPtr cbuf_addtext_alloc = IntPtr.Zero;
-    byte[] commandbytes;
-    IntPtr commandaddress;
-    byte[] nopBytes = { 0x90, 0x90 };
-
-    #endregion
-
-    public void Send(string command)
-    {
-        try
-        {
-            callbytes = BitConverter.GetBytes(cbuf_address);
-            if (command == "")
-            {
-            }
-            else
-            {
-                if (cbuf_addtext_alloc == IntPtr.Zero)
-                {
-                    cbuf_addtext_alloc = VirtualAllocEx(hProcess, IntPtr.Zero,
-                        (IntPtr)cbuf_addtext_wrapper.Length,
-                        AllocationType.Commit | AllocationType.Reserve, MemoryProtection.ExecuteReadWrite);
-                    commandbytes = System.Text.Encoding.ASCII.GetBytes(command);
-                    commandaddress = VirtualAllocEx(hProcess, IntPtr.Zero, (IntPtr)(commandbytes.Length),
-                        AllocationType.Commit | AllocationType.Reserve, MemoryProtection.ExecuteReadWrite);
-                    int bytesWritten = 0;
-                    int bytesWritten2 = commandbytes.Length;
-                    WriteProcessMemory(hProcess, commandaddress, commandbytes, commandbytes.Length,
-                        out bytesWritten2);
-
-                    Array.Copy(BitConverter.GetBytes(commandaddress.ToInt64()), 0, cbuf_addtext_wrapper, 9, 4);
-                    Array.Copy(callbytes, 0, cbuf_addtext_wrapper, 16, 4);
-
-                    WriteProcessMemory(hProcess, cbuf_addtext_alloc, cbuf_addtext_wrapper,
-                        cbuf_addtext_wrapper.Length, out bytesWritten);
-
-                    IntPtr bytesOut;
-                    CreateRemoteThread(hProcess, IntPtr.Zero, 0, cbuf_addtext_alloc, IntPtr.Zero, 0,
-                        out bytesOut);
-
-                    if (cbuf_addtext_alloc != IntPtr.Zero && commandaddress != IntPtr.Zero)
-                    {
-                        VirtualFreeEx(hProcess, cbuf_addtext_alloc, cbuf_addtext_wrapper.Length,
-                            FreeType.Release);
-                        VirtualFreeEx(hProcess, commandaddress, cbuf_addtext_wrapper.Length, FreeType.Release);
-                    }
-                }
-
-                cbuf_addtext_alloc = IntPtr.Zero;
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error");
-            Console.ReadLine();
-        }
-    }
-
-    public void FindGame()
-    {
-        if (Process.GetProcessesByName("t6mp").Length != 0)
-        {
-            cbuf_address = 0x5BDF70;
-            nop_address = 0x8C90DA;
-            dwPID = Process.GetProcessesByName("t6mp")[0].Id;
-        }
-        else if (Process.GetProcessesByName("t6zm").Length != 0)
-        {
-            cbuf_address = 0x4C7120;
-            nop_address = 0x8C768A;
-            dwPID = Process.GetProcessesByName("t6zm")[0].Id;
-        }
-        else if (Process.GetProcessesByName("t6mpv43").Length != 0)
-        {
-            cbuf_address = 0x5BDF70;
-            nop_address = 0x8C90DA;
-            dwPID = Process.GetProcessesByName("t6mpv43")[0].Id;
-        }
-        else
-        {
-            cbuf_address = 0x0;
-            nop_address = 0x0;
-            Console.WriteLine("No game found.");
-            Console.ReadLine();
-        }
-
-        hProcess = OpenProcess(ProcessAccessFlags.All, false, dwPID);
-        int nopBytesLength = nopBytes.Length;
-        WriteProcessMemory(hProcess, (IntPtr)nop_address, nopBytes, nopBytes.Length, out nopBytesLength);
     }
 }
