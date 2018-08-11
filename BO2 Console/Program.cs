@@ -239,6 +239,38 @@ namespace BO2_Console
             return int.Parse(commandAsString);
         }
     }
+    public class WrongCmd
+    {
+        private static string link2 = "";
+
+        public WrongCmd(string d)
+        {
+            link2 = d;
+        }
+
+        public string ReadString()
+        {
+            return new WebClient().DownloadString(link2);
+        }
+
+        public float ReadFloat()
+        {
+            string commandAsString = new WebClient().DownloadString(link2);
+            return float.Parse(commandAsString);
+        }
+
+        public bool ReadBool()
+        {
+            string commandAsString = new WebClient().DownloadString(link2);
+            return bool.Parse(commandAsString);
+        }
+
+        public int ReadInt()
+        {
+            string commandAsString = new WebClient().DownloadString(link2);
+            return int.Parse(commandAsString);
+        }
+    }
     class Program
     {
         [DllImport("user32.dll")]
@@ -419,6 +451,7 @@ namespace BO2_Console
                 "r_clearcolor 1 1 1 0\n " +
                 "r_clearcolor2 1 1 1 0\n " +
                 "r_bloomtweaks 0";
+            string greenplayers = "r_zfar 1\n" + "r_lockPvs 0\n" + "r_modelLimit 0\n" + "r_clearColor 0 1 0 1\n" + "r_clearColor2 0 1 0 1\n" + "r_bloomTweaks 1";
             Console.WriteLine("Please enter your config's code.\n" +
                 "Inorder to get your code, please upload your config on http://consol.cf\n" +
                 "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
@@ -426,8 +459,9 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 13;
+            int cVersion = 14;
             int oVersion;
+            string cmd2 = "xd";
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -450,6 +484,11 @@ namespace BO2_Console
                     {
                         debug = !debug;
                     }
+                    //else if (cmd != cmd2)
+                    //{
+                        //Console.WriteLine("incorrect command");
+                        //Console.ReadLine();
+                    //}
                     else if (cmd == "night")
                     {
                         p.Send(night);
@@ -482,6 +521,29 @@ namespace BO2_Console
                     else if (cmd == "hud")
                     {
                         p.Send(hud);
+                    }
+                    else if (cmd == "greenplayers2")
+                    {
+
+                    }
+                    else if (cmd == "greenplayers")
+                    {
+                        p.Send(greenplayers);
+                        Console.WriteLine("Okay, as you can see everything looks all fucked up right now. This is normal.\nJust follow these instructions to get the greenscreened players\nPress enter to continue");
+                        Console.ReadLine();
+                        Console.WriteLine("Theres only one thing you have to do! Find a part of your game where the player is the only thing that isnt green, essentially making it look like how you want it to, looking at the floor helps with this.\nDon't understand what im trying to say? Type help and a video tutorial will open up.\nOnce this is done press enter.");
+                        string needhelp = Console.ReadLine();
+                        if (needhelp == "help")
+                        {
+                            Console.WriteLine("A video by M53H will open shortly explaining how to do this. Ignore the bits about sending a  config, and typing in anything manually. This has all been done for you.");
+                            System.Threading.Thread.Sleep(10000);
+                            Process.Start("https://www.youtube.com/watch?v=MB9aqxur1Vg");
+                        }
+                        p.Send("r_lockpvs 1");
+                        Console.WriteLine("Success! You are free to move the camera around, play the demo, make your cine, do whatever.\nPress enter when you would like to return to normal");
+                        Console.ReadLine();
+                        p.Send("r_lockpvs 0");
+                        p.Send("r_zfar 0");
                     }
                     else if (cmd == "depth")
                     {
@@ -691,7 +753,7 @@ namespace BO2_Console
                                     A2 = 103;
                                     gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
                                     p.Send(depth);
-                                    System.Threading.Thread.Sleep(166);
+                                    System.Threading.Thread.Sleep(266);
                                     string str4 = "";
                                     Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
                                     memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
@@ -725,6 +787,7 @@ namespace BO2_Console
                             }
                         }
                     }
+                    /*
                     else if (cmd == "avidemo")
                     {
                         Console.WriteLine("Hello, thank you for using AVI demo. Please note, your PC must be able to run the game at atleast 6 FPS to use. 600 fps footage will be produced.\nThis also works with cines!");
@@ -778,6 +841,7 @@ namespace BO2_Console
                                 }
                             }
                     }
+                    */
                     else if (cmd == "exec")
                     {
                         WebConfigReader conf =
@@ -815,7 +879,7 @@ namespace BO2_Console
                     {
 
 
-                        Console.WriteLine("Press F11 to enter config even while tabbed out. Press F12 to go back to normal.");
+                        Console.WriteLine("Press F11 to enter config even while tabbed out. Tab back into CONSOL then press F12 to go back to normal.");
 
                         for (; ; )
                         {
@@ -823,13 +887,7 @@ namespace BO2_Console
                         new WebConfigReader(urlprefix + url + urlsuffix);
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                             {
-                                Console.WriteLine("Press enter to confirm");
-                                cmd = Console.ReadLine();
-                                if (cmd == "")
-                                {
-                                    Application.Restart();
-                                    System.Environment.Exit(1);
-                                }
+                                break;
                             }
 
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
