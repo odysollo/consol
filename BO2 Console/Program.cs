@@ -459,9 +459,8 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 14;
+            int cVersion = 15;
             int oVersion;
-            string cmd2 = "xd";
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -667,9 +666,9 @@ namespace BO2_Console
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
                         string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
                         string folder3 = Path.GetDirectoryName(Application.ExecutablePath) + "//depth//";
-                        Console.WriteLine("What com_maxfps would you like? (recommended 10-30)");
+                        Console.WriteLine("What com_maxfps would you like? (recommended 30)");
                         streamsfps = Console.ReadLine();
-                        Console.WriteLine("What timescale would you like? (recommended 0.03-0.05)");
+                        Console.WriteLine("What timescale would you like? (recommended 0.02)");
                         string streamstimescale = Console.ReadLine();
                         p.Send("com_maxfps " + streamsfps + "\n" + "timescale " + streamstimescale);
                         if (!Directory.Exists(folder1))
