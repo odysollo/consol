@@ -459,7 +459,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 15;
+            int cVersion = 16;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -485,8 +485,8 @@ namespace BO2_Console
                     }
                     //else if (cmd != cmd2)
                     //{
-                        //Console.WriteLine("incorrect command");
-                        //Console.ReadLine();
+                    //Console.WriteLine("incorrect command");
+                    //Console.ReadLine();
                     //}
                     else if (cmd == "night")
                     {
@@ -651,7 +651,6 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
-                        Console.WriteLine("Hello, thank you for testing out the streams beta. Please note, your PC must be able to run the game at atleast 10 FPS to use.\nThis will be recorded to roughly 1000fps.");
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
@@ -666,7 +665,7 @@ namespace BO2_Console
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
                         string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
                         string folder3 = Path.GetDirectoryName(Application.ExecutablePath) + "//depth//";
-                        Console.WriteLine("What com_maxfps would you like? (recommended 30)");
+                        Console.WriteLine("What com_maxfps would you like? (recommended 30, however enter the amount your pc is able to handle)");
                         streamsfps = Console.ReadLine();
                         Console.WriteLine("What timescale would you like? (recommended 0.02)");
                         string streamstimescale = Console.ReadLine();
@@ -683,105 +682,240 @@ namespace BO2_Console
                         {
                             Directory.CreateDirectory(folder3);
                         }
-                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the console. to stop.\nPlease start the recording WHILE the demo is playing\nAll recordings will be saved to three folders in your exe's directory, named regular, green, and depth.\nDo NOT tab out of your game while recording.");
+                        Console.WriteLine("Would you like to record depth, greenscreen, or both along side the regular?\n(enter either depth, greenscreen, or both. Depth works on cines too!)");
+                        string yes = Console.ReadLine();
+                        Console.WriteLine("Go ingame and press F11 to start recording. Once finished, press ALT+TAB, then close the CONSOLE to stop recording.\nPlease start the recording WHILE the demo is playing\nAll recordings will be saved to three folders in your exe's directory, named regular, green, and depth.\nDo NOT tab out of your game while recording.");
                         Bitmap memoryImage;
                         memoryImage = new Bitmap(xres, yres);
                         Size s = new Size(memoryImage.Width, memoryImage.Height);
-                        for (; ; )
+                        if (yes == "both")
                         {
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                            for (; ; )
                             {
-                                break;
-                            }
-                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-                            {
-                                for (var i = 0; ; i++)
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                                 {
-                                    SendKeys.SendWait(" ");
-                                    p.Send(greenscreen);
-                                    string str = "";
-                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
-                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
-                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
-                                    $@"\regular{i}.png");
-                                    memoryImage.Save(str);
-                                    System.Threading.Thread.Sleep(5);
-                                    float dist = 200;
-                                    gmFog.FogStartDist = dist;
-                                    float dist2 = 36631;
-                                    gmFog.FogFadeDist = dist2;
-                                    float dist3 = 10702;
-                                    gmFog.FogHeightDist = dist3;
-                                    float dist4 = 199;
-                                    gmFog.FogBiasDist = dist4;
-                                    float R = 5;
-                                    float G = 5;
-                                    float B = 5;
-                                    float A = 1;
-                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
-                                    float R2 = 5;
-                                    float G2 = 5;
-                                    float B2 = 5;
-                                    float A2 = 1;
-                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                                    p.Send(depthoff);
-                                    p.Send(regular2);
-                                    string str2 = "";
-                                    Graphics memoryGraphics = Graphics.FromImage(memoryImage);
-                                    memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
-                                    str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
-                                    $@"\green{i}.png");
-                                    memoryImage.Save(str2);
-                                    System.Threading.Thread.Sleep(5);
-                                    dist = 0;
-                                    gmFog.FogStartDist = dist;
-                                    dist2 = 2500;
-                                    gmFog.FogFadeDist = dist2;
-                                    dist3 = 20000;
-                                    gmFog.FogHeightDist = dist3;
-                                    dist4 = 1;
-                                    gmFog.FogBiasDist = dist4;
-                                    R = 1000;
-                                    G = 1000;
-                                    B = 1000;
-                                    A = 100;
-                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
-                                    R2 = 1000;
-                                    G2 = 1000;
-                                    B2 = 1000;
-                                    A2 = 103;
-                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                                    p.Send(depth);
-                                    System.Threading.Thread.Sleep(266);
-                                    string str4 = "";
-                                    Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
-                                    memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
-                                    str4 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//depth//" +
-                                    $@"\depth{i}.png");
-                                    memoryImage.Save(str4);
-                                    SendKeys.SendWait(" ");
-                                    dist = 200;
-                                    gmFog.FogStartDist = dist;
-                                    dist2 = 36631;
-                                    gmFog.FogFadeDist = dist2;
-                                    dist3 = 10702;
-                                    gmFog.FogHeightDist = dist3;
-                                    dist4 = 199;
-                                    gmFog.FogBiasDist = dist4;
-                                    R = 5;
-                                    G = 5;
-                                    B = 5;
-                                    A = 1;
-                                    gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
-                                    R2 = 5;
-                                    G2 = 5;
-                                    B2 = 5;
-                                    A2 = 1;
-                                    gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                                    p.Send(depthoff);
-                                    p.Send(regular2);
-                                    System.Threading.Thread.Sleep(250);
+                                    break;
+                                }
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
+                                    for (var i = 0; ; i++)
+                                    {
+                                        SendKeys.SendWait(" ");
+                                        p.Send(greenscreen);
+                                        string str = "";
+                                        Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                        str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
+                                        $@"\regular{i}.png");
+                                        memoryImage.Save(str);
+                                        System.Threading.Thread.Sleep(5);
+                                        float dist = 200;
+                                        gmFog.FogStartDist = dist;
+                                        float dist2 = 36631;
+                                        gmFog.FogFadeDist = dist2;
+                                        float dist3 = 10702;
+                                        gmFog.FogHeightDist = dist3;
+                                        float dist4 = 199;
+                                        gmFog.FogBiasDist = dist4;
+                                        float R = 5;
+                                        float G = 5;
+                                        float B = 5;
+                                        float A = 1;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        float R2 = 5;
+                                        float G2 = 5;
+                                        float B2 = 5;
+                                        float A2 = 1;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthoff);
+                                        p.Send(regular2);
+                                        string str2 = "";
+                                        Graphics memoryGraphics = Graphics.FromImage(memoryImage);
+                                        memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
+                                        str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
+                                        $@"\green{i}.png");
+                                        memoryImage.Save(str2);
+                                        System.Threading.Thread.Sleep(5);
+                                        dist = 0;
+                                        gmFog.FogStartDist = dist;
+                                        dist2 = 2500;
+                                        gmFog.FogFadeDist = dist2;
+                                        dist3 = 20000;
+                                        gmFog.FogHeightDist = dist3;
+                                        dist4 = 1;
+                                        gmFog.FogBiasDist = dist4;
+                                        R = 1000;
+                                        G = 1000;
+                                        B = 1000;
+                                        A = 100;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        R2 = 1000;
+                                        G2 = 1000;
+                                        B2 = 1000;
+                                        A2 = 103;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depth);
+                                        System.Threading.Thread.Sleep(266);
+                                        string str4 = "";
+                                        Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
+                                        str4 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//depth//" +
+                                        $@"\depth{i}.png");
+                                        memoryImage.Save(str4);
+                                        SendKeys.SendWait(" ");
+                                        dist = 200;
+                                        gmFog.FogStartDist = dist;
+                                        dist2 = 36631;
+                                        gmFog.FogFadeDist = dist2;
+                                        dist3 = 10702;
+                                        gmFog.FogHeightDist = dist3;
+                                        dist4 = 199;
+                                        gmFog.FogBiasDist = dist4;
+                                        R = 5;
+                                        G = 5;
+                                        B = 5;
+                                        A = 1;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        R2 = 5;
+                                        G2 = 5;
+                                        B2 = 5;
+                                        A2 = 1;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthoff);
+                                        p.Send(regular2);
+                                        System.Threading.Thread.Sleep(250);
 
+                                    }
+                                }
+                            }
+                        }
+                        else if (yes == "greenscreen")
+                        {
+                            for (; ; )
+                            {
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                                {
+                                    break;
+                                }
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
+                                    for (var i = 0; ; i++)
+                                    {
+                                        SendKeys.SendWait(" ");
+                                        p.Send(greenscreen);
+                                        string str = "";
+                                        Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                        str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
+                                        $@"\regular{i}.png");
+                                        memoryImage.Save(str);
+                                        System.Threading.Thread.Sleep(4);
+                                        p.Send(regular2);
+                                        string str2 = "";
+                                        Graphics memoryGraphics = Graphics.FromImage(memoryImage);
+                                        memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
+                                        str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//green//" +
+                                        $@"\green{i}.png");
+                                        memoryImage.Save(str2);
+                                        SendKeys.SendWait(" ");
+                                        System.Threading.Thread.Sleep(250);
+
+                                    }
+                                }
+                            }
+                        }
+                        else if (yes == "depth")
+                        {
+                            for (; ; )
+                            {
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                                {
+                                    break;
+                                }
+                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                                {
+                                    for (var i = 0; ; i++)
+                                    {
+                                        SendKeys.SendWait(" ");
+                                        float dist = 200;
+                                        gmFog.FogStartDist = dist;
+                                        float dist2 = 36631;
+                                        gmFog.FogFadeDist = dist2;
+                                        float dist3 = 10702;
+                                        gmFog.FogHeightDist = dist3;
+                                        float dist4 = 199;
+                                        gmFog.FogBiasDist = dist4;
+                                        float R = 5;
+                                        float G = 5;
+                                        float B = 5;
+                                        float A = 1;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        float R2 = 5;
+                                        float G2 = 5;
+                                        float B2 = 5;
+                                        float A2 = 1;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthoff);
+                                        p.Send(regular2);
+                                        p.Send("cg_drawgun 1");
+                                        string str2 = "";
+                                        Graphics memoryGraphics = Graphics.FromImage(memoryImage);
+                                        memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
+                                        str2 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//regular//" +
+                                        $@"\regular{i}.png");
+                                        memoryImage.Save(str2);
+                                        System.Threading.Thread.Sleep(5);
+                                        dist = 0;
+                                        gmFog.FogStartDist = dist;
+                                        dist2 = 2500;
+                                        gmFog.FogFadeDist = dist2;
+                                        dist3 = 20000;
+                                        gmFog.FogHeightDist = dist3;
+                                        dist4 = 1;
+                                        gmFog.FogBiasDist = dist4;
+                                        R = 1000;
+                                        G = 1000;
+                                        B = 1000;
+                                        A = 100;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        R2 = 1000;
+                                        G2 = 1000;
+                                        B2 = 1000;
+                                        A2 = 103;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depth);
+                                        p.Send("cg_drawgun 0");
+                                        System.Threading.Thread.Sleep(266);
+                                        string str4 = "";
+                                        Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
+                                        memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
+                                        str4 = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//depth//" +
+                                        $@"\depth{i}.png");
+                                        memoryImage.Save(str4);
+                                        SendKeys.SendWait(" ");
+                                        dist = 200;
+                                        gmFog.FogStartDist = dist;
+                                        dist2 = 36631;
+                                        gmFog.FogFadeDist = dist2;
+                                        dist3 = 10702;
+                                        gmFog.FogHeightDist = dist3;
+                                        dist4 = 199;
+                                        gmFog.FogBiasDist = dist4;
+                                        R = 5;
+                                        G = 5;
+                                        B = 5;
+                                        A = 1;
+                                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                                        R2 = 5;
+                                        G2 = 5;
+                                        B2 = 5;
+                                        A2 = 1;
+                                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthoff);
+                                        p.Send(regular2);
+                                        System.Threading.Thread.Sleep(250);
+
+                                    }
                                 }
                             }
                         }
