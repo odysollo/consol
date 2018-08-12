@@ -660,7 +660,7 @@ namespace BO2_Console
                     {
                         string streamsfps = "";
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                        Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
+                        Console.WriteLine("Please enter your monitors resolution");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Y:");
