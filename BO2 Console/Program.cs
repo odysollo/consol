@@ -452,8 +452,9 @@ namespace BO2_Console
                 "r_clearcolor2 1 1 1 0\n " +
                 "r_bloomtweaks 0";
             string greenplayers = "r_zfar 1\n" + "r_lockPvs 0\n" + "r_modelLimit 0\n" + "r_clearColor 0 1 0 1\n" + "r_clearColor2 0 1 0 1\n" + "r_bloomTweaks 1";
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Please enter your config's code.\n" +
-                "Inorder to get your code, please upload your config on http://consol.cf\n" +
+            "Inorder to get your code, please upload your config on http://consol.cf\n" +
                 "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
                 "Enter code Here: ");
             string url = Console.ReadLine();
@@ -528,6 +529,7 @@ namespace BO2_Console
                     else if (cmd == "greenplayers")
                     {
                         p.Send(greenplayers);
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Okay, as you can see everything looks all fucked up right now. This is normal.\nJust follow these instructions to get the greenscreened players\nPress enter to continue");
                         Console.ReadLine();
                         Console.WriteLine("Theres only one thing you have to do! Find a part of your game where the player is the only thing that isnt green, essentially making it look like how you want it to, looking at the floor helps with this.\nDon't understand what im trying to say? Type help and a video tutorial will open up.\nOnce this is done press enter.");
@@ -568,30 +570,35 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogdist")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog distance");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogStartDist = dist;
                     }
                     else if (cmd == "fogfade")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog fade distance");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogFadeDist = dist;
                     }
                     else if (cmd == "fogheight")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog height");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogHeightDist = dist;
                     }
                     else if (cmd == "fogbias")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog bias");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogBiasDist = dist;
                     }
                     else if (cmd == "fogcolor")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog color RED");
                         float R = float.Parse(Console.ReadLine());
                         Console.WriteLine("Now green");
@@ -604,6 +611,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogfarcolor")
                     {
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog far color RED");
                         float R = float.Parse(Console.ReadLine());
                         Console.WriteLine("Now green");
@@ -651,6 +659,7 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
