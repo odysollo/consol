@@ -458,9 +458,9 @@ namespace BO2_Console
                 "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
                 "Enter code Here: ");
             string url = Console.ReadLine();
-            string urlprefix = "http://consol.cf/configs/";
+            string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 17;
+            int cVersion = 18;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -1011,11 +1011,11 @@ namespace BO2_Console
                     }
                     else if (cmd == "help")
                     {
-                        Process.Start("http://consol.cf/tutorial.php");
+                        Process.Start("https://consol.cf/tutorial/");
                     }
                     else if (cmd == "commands")
                     {
-                        Process.Start("http://consol.cf/commands.php");
+                        Process.Start("http://consol.cf/commands");
                     }
                     else if (cmd == "ingame")
                     //this currenly works, all thats needed is the ability to enter a command to stop loop.
