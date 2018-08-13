@@ -460,7 +460,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 16;
+            int cVersion = 17;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -929,18 +929,17 @@ namespace BO2_Console
                             }
                         }
                     }
-                    /*
                     else if (cmd == "avidemo")
                     {
-                        Console.WriteLine("Hello, thank you for using AVI demo. Please note, your PC must be able to run the game at atleast 6 FPS to use. 600 fps footage will be produced.\nThis also works with cines!");
+                        Console.WriteLine("Hello, thank you for using AVI demo. This also works with cines!");
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Y:");
                         int yres = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("What com_maxfps would you like to record at?");
+                        Console.WriteLine("What com_maxfps would you like to record at? (use what your pc can run at)");
                         string avifps = Console.ReadLine();
-                        Console.WriteLine("What timescale would you like to record at?");
+                        Console.WriteLine("What timescale would you like to record at?(recommened 0.02)");
                         string avitimescale = Console.ReadLine();
                         Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
@@ -962,28 +961,30 @@ namespace BO2_Console
                         new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s2 in tokens)
-                            p.Send(s2);
+                        p.Send(s2);
                         for (; ; )
+                        {
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
                             {
-                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
+                                break;
+                            }
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                            {
+                                for (var i = 0; ; i++)
                                 {
-                                    break;
-                                }
-                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
-                                {
-                                    for (var i = 0; ; i++)
-                                    {
-                                        string str = "";
-                                        Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
-                                        memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
-                                        str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
-                                        $@"\avidemo{i}.png");
-                                        memoryImage.Save(str);
-                                    }
+                                    SendKeys.SendWait(" ");
+                                    string str = "";
+                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//avidemo//" +
+                                    $@"\avidemo{i}.png");
+                                    memoryImage.Save(str);
+                                    SendKeys.SendWait(" ");
+                                    System.Threading.Thread.Sleep(250);
                                 }
                             }
+                        }
                     }
-                    */
                     else if (cmd == "exec")
                     {
                         WebConfigReader conf =
