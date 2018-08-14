@@ -460,7 +460,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 18;
+            int cVersion = 19;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -654,16 +654,16 @@ namespace BO2_Console
                     }
                     else if (cmd == "animate")
                     {
-                        int startfov;
-                        int endfov;
+                        float startfov;
+                        float endfov;
                         Console.WriteLine("What command would you like to use? Please enter the command with no space or number at the end.");
                         string cmdlol = Console.ReadLine();
                         Console.WriteLine("Please choose your starting value:");
-                        startfov = Convert.ToInt32(Console.ReadLine());
+                        startfov = Convert.ToSingle(Console.ReadLine());
                         Console.WriteLine("Now the end:");
-                        endfov = Convert.ToInt32(Console.ReadLine());
+                        endfov = Convert.ToSingle(Console.ReadLine());
                         Console.WriteLine("What would you like the numbers to increment in?");
-                        int inc = Convert.ToInt32(Console.ReadLine());
+                        float inc = Convert.ToSingle(Console.ReadLine());
                         Console.WriteLine("What delay would you like ? (this is the amount of time in miliseconds between each change.)");
                         int delay = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Great! Hold F11 to begin the animation, even while still ingame!\nThe animation will stop once it reaces your end value.");
@@ -677,7 +677,14 @@ namespace BO2_Console
                             {
                                 {
                                     p.Send(cmdlol + " " + startfov);
-                                    startfov = startfov + inc;
+                                    if (startfov > endfov)
+                                    {
+                                        startfov = startfov - inc;
+                                    }
+                                    else
+                                    {
+                                        startfov = startfov + inc;
+                                    }
                                     System.Threading.Thread.Sleep(delay);
                                 }
                             }
