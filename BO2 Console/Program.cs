@@ -422,7 +422,7 @@ namespace BO2_Console
     "r_glow 1\n" +
     "r_glow_allowed 1\n" +
     "r_seethru_decal_enable 1\n" +
-    "r_drawdecals 1\n" + "cg_drawgun 0";
+    "r_drawdecals 1\n" + "cg_drawgun 1";
             string greensky = "r_modellimit 0\n" + "r_clearcolor 0 1 0\n" + "r_clearcolor2 0 1 0\n" + "r_bloomtweaks 1\n";
             string depth = "r_Dof_Enable 0\n" +
                 "r_dof_bias 0\n" +
@@ -460,7 +460,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 19;
+            int cVersion = 20;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -697,18 +697,12 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
-                        string depthgunyes = "cg_drawgun 1";
-                        string depthgunno = "cg_drawgun 0";
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("Please enter your monitors resolution");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Y:");
                         int yres = Convert.ToInt32(Console.ReadLine());
-                        //Console.WriteLine("Please enter the command you would like to use for the first stream (i.e. greenscreen, or a custom command)");
-                        //string streamscmd1 = Console.ReadLine();
-                        //Console.WriteLine("Now the second (i.e. regular, or a custom command)");
-                        //string streamscmd2 = Console.ReadLine();
                         Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
@@ -904,7 +898,6 @@ namespace BO2_Console
                                         float B2 = 5;
                                         float A2 = 1;
                                         gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                                        p.Send(depthgunyes);
                                         p.Send(depthoff);
                                         p.Send(regular2);
                                         string str2 = "";
@@ -932,8 +925,8 @@ namespace BO2_Console
                                         B2 = 1000;
                                         A2 = 103;
                                         gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                                        p.Send(depthgunno);
                                         p.Send(depth);
+                                        p.Send("cg_drawgun 0");
                                         System.Threading.Thread.Sleep(266);
                                         string str4 = "";
                                         Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
