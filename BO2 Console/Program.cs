@@ -441,7 +441,7 @@ namespace BO2_Console
                 "r_modellimit 40\n" +
                 "r_clearcolor 1 1 1 0\n" +
                 "r_clearcolor2 1 1 1 0\n" +
-                "r_bloomtweaks 1";
+                "r_bloomtweaks 1\n" + "cg_drawgun 0";
             string depthoff = "cg_draw2d 1\n " +
                 "r_enablePlayerShadow 0\n " +
                 "r_exposureTweak 0\n " +
@@ -460,7 +460,7 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 20;
+            int cVersion = 21;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
@@ -927,7 +927,7 @@ namespace BO2_Console
                                         gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
                                         p.Send(depth);
                                         p.Send("cg_drawgun 0");
-                                        System.Threading.Thread.Sleep(266);
+                                        System.Threading.Thread.Sleep(225);
                                         string str4 = "";
                                         Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
                                         memoryGraphics4.CopyFromScreen(0, 0, 0, 0, s);
