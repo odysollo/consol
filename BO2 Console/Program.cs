@@ -652,6 +652,37 @@ namespace BO2_Console
                     {
                         p.Send(regular);
                     }
+                    else if (cmd == "animate")
+                    {
+                        int startfov;
+                        int endfov;
+                        Console.WriteLine("What command would you like to use? Please enter the command with no space or number at the end.");
+                        string cmdlol = Console.ReadLine();
+                        Console.WriteLine("Please choose your starting value:");
+                        startfov = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Now the end:");
+                        endfov = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("What would you like the numbers to increment in?");
+                        int inc = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("What delay would you like ? (this is the amount of time in miliseconds between each change.)");
+                        int delay = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Great! Hold F11 to begin the animation, even while still ingame!\nThe animation will stop once it reaces your end value.");
+                        for (; ; )
+                        {
+                            if (startfov == endfov)
+                            {
+                                break;
+                            }
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                            {
+                                {
+                                    p.Send(cmdlol + " " + startfov);
+                                    startfov = startfov + inc;
+                                    System.Threading.Thread.Sleep(delay);
+                                }
+                            }
+                        }
+                    }
                     else if (cmd == "greensky")
                     {
                         p.Send(greensky);
@@ -659,6 +690,8 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         string streamsfps = "";
+                        string depthgunyes = "cg_drawgun 1";
+                        string depthgunno = "cg_drawgun 0";
                         Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("Please enter your monitors resolution");
                         Console.WriteLine("X:");
@@ -864,9 +897,9 @@ namespace BO2_Console
                                         float B2 = 5;
                                         float A2 = 1;
                                         gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthgunyes);
                                         p.Send(depthoff);
                                         p.Send(regular2);
-                                        p.Send("cg_drawgun 1");
                                         string str2 = "";
                                         Graphics memoryGraphics = Graphics.FromImage(memoryImage);
                                         memoryGraphics.CopyFromScreen(0, 0, 0, 0, s);
@@ -892,8 +925,8 @@ namespace BO2_Console
                                         B2 = 1000;
                                         A2 = 103;
                                         gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                                        p.Send(depthgunno);
                                         p.Send(depth);
-                                        p.Send("cg_drawgun 0");
                                         System.Threading.Thread.Sleep(266);
                                         string str4 = "";
                                         Graphics memoryGraphics4 = Graphics.FromImage(memoryImage);
@@ -961,7 +994,7 @@ namespace BO2_Console
                         new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s2 in tokens)
-                        p.Send(s2);
+                            p.Send(s2);
                         for (; ; )
                         {
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))

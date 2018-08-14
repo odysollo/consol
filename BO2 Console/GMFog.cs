@@ -26,7 +26,7 @@ namespace BO2_Console
             //FogFadeDistR = 0x032224BC,
             //FogHeightR = 0x032224C4,
             //FogBiasR = 0x032224C8,
-            //FogBaseColorR = 0x036224D8,
+            //FogBaseColorR = 0x0,
             //FogFarColorR = 0x0,
 
         }
