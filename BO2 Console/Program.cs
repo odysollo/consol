@@ -188,18 +188,23 @@ namespace BO2_Console
             }
             else if (Process.GetProcessesByName("t6mpv43").Length != 0)
             {
-                cbuf_address = 0x5BDF70;
-                nop_address = 0x8C90DA;
+                cbuf_address = 0x5C6F10;
+                nop_address = 0x8C923A;
                 dwPID = Process.GetProcessesByName("t6mpv43")[0].Id;
+            }
+            else if (Process.GetProcessesByName("t6zmv41").Length != 0)
+            {
+                cbuf_address = 0x6B9D20;
+                nop_address = 0x8C7E7A;
+                dwPID = Process.GetProcessesByName("t6zmv41")[0].Id;
             }
             else
             {
                 cbuf_address = 0x0;
                 nop_address = 0x0;
-                Console.WriteLine("No game found.");
+                Console.WriteLine("No game found. Please open your game then restart CONSOL");
                 Console.ReadLine();
             }
-
             hProcess = OpenProcess(ProcessAccessFlags.All, false, dwPID);
             int nopBytesLength = nopBytes.Length;
             WriteProcessMemory(hProcess, (IntPtr)nop_address, nopBytes, nopBytes.Length, out nopBytesLength);
@@ -347,31 +352,44 @@ namespace BO2_Console
             string maxfps = "com_maxfps 30 \n" + "timescale 0.01";
             string quality = " r_lodbiasSkinned -1000\n" +
                 "r_lodbiasRigid -1000";
-            string hud = "hud_health_pulserate_critical 0\n " +
-                "hud_health_pulserate_injured 0\n" +
-                "hud_health_startpulse_critical 0\n" +
-                "hud_health_startpulse_injured 0\n" +
-                "hud_healthOverlay_phaseEnd_pulseDuration 0\n" +
-                "hud_healthOverlay_phaseEnd_toAlpha 0\n" +
-                "hud_healthOverlay_phaseOne_pulseDuration 0\n" +
-                "hud_healthOverlay_phaseThree_pulseDuration 0\n" +
-                "hud_healthOverlay_phaseThree_toAlphaMultiplier 0\n" +
-                "hud_healthOverlay_phaseTwo_pulseDuration 0\n" +
-                "hud_healthOverlay_phaseTwo_toAlphaMultiplier 0\n" +
-                "hud_healthOverlay_pulseStart 0\n" +
-                "hud_healthOverlay_regenPauseTime 0\n" +
-                "r_blur 0\n" +
-                "r_detail 1\n" +
-                "r_distortion 1\n" +
-                "r_drawWater 1\n" +
-                "r_forceLod 0\n" +
-                "r_lodBiasRigid - 1000\n" +
-                "r_lodBiasSkinned - 1000\n" +
-                "r_lodScaleRigid 1\n" +
-                "r_lodScaleSkinned 1\n" +
-                "r_normalMap 1\n" +
-                "r_rendererinuse shader model 3.0\n" +
-                "r_rendererPreference shader model 3.0";
+            string hud = "hud_health_pulserate_critical 0\n" +
+                        "hud_health_pulserate_injured 0\n" +
+                        "hud_health_startpulse_critical 0\n" +
+                        "hud_health_startpulse_injured 0\n" +
+                        "hud_healthOverlay_phaseEnd_pulseDuration 0\n" +
+                        "hud_healthOverlay_phaseEnd_toAlpha 0\n" +
+                        "hud_healthOverlay_phaseOne_pulseDuration 0\n" +
+                        "hud_healthOverlay_phaseThree_pulseDuration 0\n" +
+                        "hud_healthOverlay_phaseThree_toAlphaMultiplier 0\n" +
+                        "hud_healthOverlay_phaseTwo_pulseDuration 0\n" +
+                        "hud_healthOverlay_phaseTwo_toAlphaMultiplier 0\n" +
+                        "hud_healthOverlay_pulseStart 0\n" +
+                        "hud_healthOverlay_regenPauseTime 0\n" +
+                        "cg_hudDamageIconHeight 0\n" +
+                        "cg_overheadnamesfarscale 0\n" +
+                        "cg_overheadiconsize 0\n" +
+                        "cg_overheadRankSize 0\n" +
+                        "cg_overheadnamesfont 6\n" +
+                        "cg_constantSizeHeadIcons 0\n" +
+                        "cg_overheadnamessize 0\n" +
+                        "cg_overheadnamesglow 0 0 0 0\n" +
+                        "cg_hudDamageIconHeight 0\n" +
+                        "cg_hudDamageIconInScope 0\n" +
+                        "cg_hudDamageIconOffset 0\n" +
+                        "cg_hudDamageIconTime 0\n" +
+                        "cg_hudDamageIconWidth 0\n" +
+                        "cg_hudGrenadeIconEnabledFlash 0\n" +
+                        "cg_hudGrenadeIconHeight 0\n" +
+                        "cg_hudGrenadeIconInScope 0\n" +
+                        "cg_hudGrenadeIconMaxHeight 0\n" +
+                        "cg_hudGrenadeIconOffset 0\n" +
+                        "cg_hudGrenadeIconWidth 0\n" +
+                        "cg_hudGrenadePointerHeight 0\n" +
+                        "cg_hudGrenadePointerPivot 0\n" +
+                        "cg_hudGrenadePointerWidth 0\n" +
+                        "cg_hardcore 1\n" +
+                        "cg_useColorControl 1\n" +
+                        "bg_bobMax 0\n";
             string greenscreen = "r_modellimit 0 \n" + "r_skipPvs 1\n" + "r_lockPvs .875\n" + "r_bloomTweaks 1\n" +
                  "r_bloomHiQuality 0\n" +
                 "r_clearColor 0 1 0 0\n" +
@@ -404,7 +422,8 @@ namespace BO2_Console
                 "r_glow 1\n" +
                 "r_glow_allowed 1\n" +
                 "r_seethru_decal_enable 1\n" +
-                "r_drawdecals 1\n";
+                "r_drawdecals 1\n" +
+                "cg_drawgun 1";
             string regular2 = "r_modellimit 1000\n" +
     "r_skipPvs 0\n" +
     "r_lockPvs 0\n" +
@@ -460,8 +479,9 @@ namespace BO2_Console
             string url = Console.ReadLine();
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 21;
+            int cVersion = 22;
             int oVersion;
+            bool cfgselect = true;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -480,16 +500,7 @@ namespace BO2_Console
                     cmd = Console.ReadLine();
                     p.Send(cmd);
                     Console.WriteLine("Command successfully executed\n");
-                    if (cmd == "switch")
-                    {
-                        debug = !debug;
-                    }
-                    //else if (cmd != cmd2)
-                    //{
-                    //Console.WriteLine("incorrect command");
-                    //Console.ReadLine();
-                    //}
-                    else if (cmd == "night")
+                    if (cmd == "night")
                     {
                         p.Send(night);
                     }
@@ -505,6 +516,17 @@ namespace BO2_Console
                     else if (cmd == "fps 300")
                     {
                         p.Send(threefps);
+                    }
+                    else if (cmd == "reload")
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("Please enter your config's code.\n");
+                        url = Console.ReadLine();
+                    }
+                    else if (cmd == "select")
+                    {
+                        Console.WriteLine("Which config would you like to select? (enter 1 or 2)");
+                        cfgselect = !cfgselect;
                     }
                     else if (cmd == "fps 600")
                     {
@@ -522,7 +544,7 @@ namespace BO2_Console
                     {
                         p.Send(hud);
                     }
-                    else if (cmd == "greenplayers2")
+                    else if (cmd == "restart")
                     {
 
                     }
@@ -545,6 +567,7 @@ namespace BO2_Console
                         Console.ReadLine();
                         p.Send("r_lockpvs 0");
                         p.Send("r_zfar 0");
+                        p.Send(regular);
                     }
                     else if (cmd == "depth")
                     {
@@ -735,10 +758,6 @@ namespace BO2_Console
                         {
                             for (; ; )
                             {
-                                if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
-                                {
-                                    break;
-                                }
                                 if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
                                 {
                                     for (var i = 0; ; i++)
@@ -1020,11 +1039,11 @@ namespace BO2_Console
                     }
                     else if (cmd == "exec")
                     {
-                        WebConfigReader conf =
-                        new WebConfigReader(urlprefix + url + urlsuffix);
-                        string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
-                        foreach (string s in tokens)
-                            p.Send(s);
+                            WebConfigReader conf =
+                            new WebConfigReader(urlprefix + url + urlsuffix);
+                            string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                            foreach (string s in tokens)
+                                p.Send(s);
                     }
                     else if (cmd == "e")
                     {

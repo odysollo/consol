@@ -22,13 +22,6 @@ namespace BO2_Console
             FogBias = 0x036434C8,
             FogBaseColor = 0x036434D8,
             FogFarColor = 0x036434E8,
-            //FogStartDistR = 0x032224B8,
-            //FogFadeDistR = 0x032224BC,
-            //FogHeightR = 0x032224C4,
-            //FogBiasR = 0x032224C8,
-            //FogBaseColorR = 0x0,
-            //FogFarColorR = 0x0,
-
         }
 
         private ProcessMemory ProcessMemory;
