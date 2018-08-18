@@ -1302,7 +1302,7 @@ namespace BO2_Console
             Console.WriteLine("Loading...");
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 23;
+            int cVersion = 24;
             int oVersion;
             bool depthon = false;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
@@ -1614,13 +1614,11 @@ namespace BO2_Console
                     else if (cmd == "streams")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
+                        Console.WriteLine("Before starting, it is very important that your read ALL text shown.\n");
                         string streamsfps = "";
-                        Console.WriteLine("Please enter your monitors resolution");
-                        Console.WriteLine("X:");
-                        int xres = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("Y:");
-                        int yres = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("Thank you, please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
+                        int xres = int.Parse(Screen.PrimaryScreen.Bounds.Width.ToString());
+                        int yres = int.Parse(Screen.PrimaryScreen.Bounds.Height.ToString());
+                        Console.WriteLine("Please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
                         Console.ReadLine();
                         string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//regular//";
                         string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//green//";
