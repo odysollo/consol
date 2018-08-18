@@ -165,7 +165,7 @@ namespace BO2_Console
                     cbuf_addtext_alloc = IntPtr.Zero;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Error");
                 Console.ReadLine();
@@ -202,7 +202,7 @@ namespace BO2_Console
             {
                 cbuf_address = 0x0;
                 nop_address = 0x0;
-                Console.WriteLine("No game found. Please open your game then restart CONSOL");
+                Console.WriteLine("No game found. Please open your game then restart CONSOL.");
                 Console.ReadLine();
             }
             hProcess = OpenProcess(ProcessAccessFlags.All, false, dwPID);
@@ -469,89 +469,938 @@ namespace BO2_Console
                 "r_modellimit 1024\n " +
                 "r_clearcolor 1 1 1 0\n " +
                 "r_clearcolor2 1 1 1 0\n " +
+                "cg_drawgun 1" +
                 "r_bloomtweaks 0";
             string greenplayers = "r_zfar 1\n" + "r_lockPvs 0\n" + "r_modelLimit 0\n" + "r_clearColor 0 1 0 1\n" + "r_clearColor2 0 1 0 1\n" + "r_bloomTweaks 1";
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Please enter your config's code.\n" +
-            "Inorder to get your code, please upload your config on http://consol.cf\n" +
-                "Need help? Enter 0000 as your code, then type 'help' for a how-to-use\nAnd 'commands' for a full commands list.\n" +
-                "Enter code Here: ");
-            string url = Console.ReadLine();
+            //Curent WIP is savefog command
+            string codename = "code";
+            string url = "";
+            bool disableanim = true;
+            int delay2 = 0;
+            int delay3 = 0;
+            if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//settings//" + "anim" + ".solset"))
+            {
+                string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string existingFile = "anim" + ".solset";
+                string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                string custom = File.ReadAllText(Path.Combine(yourDirectory, "anim" + ".solset"));
+                disableanim = false;
+            }
+            if (disableanim == false)
+            {
+                delay2 = 0;
+                delay3 = 0;
+            }
+            else if (disableanim == true)
+            {
+                delay2 = 50;
+                delay3 = 100;
+            }
+            Console.WriteLine(@"      ___           ___           ___           ___           ___           ___ 
+     /\  \         /\  \         /\__\         /\  \         /\  \         /\__\
+    /::\  \       /::\  \       /::|  |       /::\  \       /::\  \       /:/  /
+   /:/\:\  \     /:/\:\  \     /:|:|  |      /:/\ \  \     /:/\:\  \     /:/  / 
+  /:/  \:\  \   /:/  \:\  \   /:/|:|  |__   _\:\~\ \  \   /:/  \:\  \   /:/  /  
+ /:/__/ \:\__\ /:/__/ \:\__\ /:/ |:| /\__\ /\ \:\ \ \__\ /:/__/ \:\__\ /:/__/   
+ \:\  \  \/__/ \:\  \ /:/  / \/__|:|/:/  / \:\ \:\ \/__/ \:\  \ /:/  / \:\  \   
+  \:\  \        \:\  /:/  /      |:/:/  /   \:\ \:\__\    \:\  /:/  /   \:\  \  
+   \:\  \        \:\/:/  /       |::/  /     \:\/:/  /     \:\/:/  /     \:\  \ 
+    \:\__\        \::/  /        /:/  /       \::/  /       \::/  /       \:\__\
+     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/");
+            Console.WriteLine("");
+            System.Threading.Thread.Sleep(250);
+            Console.ForegroundColor = ConsoleColor.White;
+            string gameText = "Current game found: ";
+            for (int i = 0; i < gameText.Length; i++)
+
+            {
+                Console.Write(gameText[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            string game = "";
+            if (Process.GetProcessesByName("t6mp").Length != 0)
+            {
+                game = "Steam BO2";
+            }
+            else if (Process.GetProcessesByName("t6zm").Length != 0)
+            {
+                game = "Steam BO2 Zombies";
+            }
+            else if (Process.GetProcessesByName("t6mpv43").Length != 0)
+            {
+                game = "Redacted BO2";
+            }
+            else if (Process.GetProcessesByName("t6zmv41").Length != 0)
+            {
+                game = "Redacted BO2 Zombies";
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            string warning = " (Please note fog does not currently work on redacted)";
+            if (game == "Redacted BO2")
+            {
+                game = game + warning;
+            }
+            for (int i = 0; i < game.Length; i++)
+
+            {
+                Console.Write(game[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.Write("\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            string helpText = "Need help? Enter ";
+            for (int i = 0; i < helpText.Length; i++)
+
+            {
+                Console.Write(helpText[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            string helpText2 = "help ";
+            for (int i = 0; i < helpText2.Length; i++)
+
+            {
+                Console.Write(helpText2[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            string helpText3 = "as your code.";
+            for (int i = 0; i < helpText3.Length; i++)
+
+            {
+                Console.Write(helpText3[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.Write("\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            System.Threading.Thread.Sleep(200);
+            string codeText = "Enter code ";
+            for (int i = 0; i < codeText.Length; i++)
+
+            {
+                Console.Write(codeText[i]);
+                System.Threading.Thread.Sleep(delay3);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            string codeText2 = "here";
+            for (int i = 0; i < codeText2.Length; i++)
+
+            {
+                Console.Write(codeText2[i]);
+                System.Threading.Thread.Sleep(delay3);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            string codeText3 = ": ";
+            for (int i = 0; i < codeText3.Length; i++)
+
+            {
+                Console.Write(codeText3[i]);
+                System.Threading.Thread.Sleep(delay3);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            bool saved = false;
+            if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//settings//" + codename + ".solset"))
+            {
+                Console.WriteLine("Saved code loaded.\n");
+                string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string existingFile = codename + ".solset";
+                string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                string custom2 = File.ReadAllText(Path.Combine(yourDirectory, codename + ".solset"));
+                url = custom2;
+                saved = true;
+            }
+            if (saved == false)
+            {
+                url = Console.ReadLine();
+            }
+            if (url == "help")
+            {
+                Console.Clear();
+                string dashText = "------------------------------------------------------------";
+                for (int i = 0; i < dashText.Length; i++)
+                {
+                    Console.Write(dashText[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(100);
+                Console.Write("\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                string hello = "Hello! Thank you for taking interest in CONSOL.\n";
+                for (int i = 0; i < hello.Length; i++)
+                {
+                    Console.Write(hello[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(1500);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string confusing = "Everything may look very confusing, however, please do-not be intimidated by the command-line-interface.\n";
+                for (int i = 0; i < confusing.Length; i++)
+                {
+                    Console.Write(confusing[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(3000);
+                Console.ForegroundColor = ConsoleColor.White;
+                string hang = "Once you get the hang of it, you will find everything to be much faster and easier than a traditional console.\n";
+                for (int i = 0; i < hang.Length; i++)
+                {
+                    Console.Write(hang[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(2500);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string explain = "I'll try to explain everything as well as I can, however, if you still have any questions, please join our Discord.\n";
+                for (int i = 0; i < explain.Length; i++)
+                {
+                    Console.Write(explain[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(3000);
+                Console.ForegroundColor = ConsoleColor.White;
+                string linkp1 = "Link is on site (";
+                for (int i = 0; i < linkp1.Length; i++)
+                {
+                    Console.Write(linkp1[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                string link = "https://consol.cf";
+                for (int i = 0; i < link.Length; i++)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.Write(link[i]);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(").\n");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                System.Threading.Thread.Sleep(1000);
+                string press = "Press ";
+                for (int i = 0; i < press.Length; i++)
+                {
+                    Console.Write(press[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                string linelmao = "'";
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string enter = "enter";
+                for (int i = 0; i < enter.Length; i++)
+                {
+                    Console.Write(enter[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string tocontinue = " to continue.";
+                for (int i = 0; i < tocontinue.Length; i++)
+                {
+                    Console.Write(tocontinue[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ReadLine();
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < dashText.Length; i++)
+                {
+                    Console.Write(dashText[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.Write("\n");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string toStart = "First things first, I can see that you have got ";
+                for (int i = 0; i < toStart.Length; i++)
+                {
+                    Console.Write(toStart[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                if (game == "Redacted BO2 (Please note fog does not currently work on redacted)")
+                {
+                    game = "Redacted BO2";
+                }
+                for (int i = 0; i < game.Length; i++)
+                {
+                    Console.Write(game[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string open = " open\n";
+                for (int i = 0; i < open.Length; i++)
+                {
+                    Console.Write(open[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                System.Threading.Thread.Sleep(2000);
+                string startoff = "To start off with the basics,\n";
+                for (int i = 0; i < startoff.Length; i++)
+                {
+                    Console.Write(startoff[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string gamedemo = "CODTV";
+                if (game == "Redacted BO2")
+                {
+                    gamedemo = "Redacted";
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                string goahead = "Go ahead and load into a custom game or a " + gamedemo + " demo.";
+                for (int i = 0; i < goahead.Length; i++)
+                {
+                    Console.Write(goahead[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(1500);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write("\n");
+                for (int i = 0; i < press.Length; i++)
+                {
+                    Console.Write(press[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                for (int i = 0; i < enter.Length; i++)
+                {
+                    Console.Write(enter[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string tocontinue2 = " once you are in one of these.";
+                for (int i = 0; i < tocontinue2.Length; i++)
+                {
+                    Console.Write(tocontinue2[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ReadLine();
+                string text;
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Great, to make this easy the first thing I will have you do is send a basic command into the game.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(1000);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "You probably already know this command, but if not, this command does something really simple.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(1000);
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "The command is: ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "cg_drawgun 0\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                System.Threading.Thread.Sleep(1000);
+                text = "And I'm pretty sure you can guess what this does. ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                text = "It hides the gun.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                System.Threading.Thread.Sleep(1000);
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                for (int i = 0; i < press.Length; i++)
+                {
+                    Console.Write(press[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                for (int i = 0; i < enter.Length; i++)
+                {
+                    Console.Write(enter[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < linelmao.Length; i++)
+                {
+                    Console.Write(linelmao[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string tocontinue3 = " to send this command to your game.";
+                for (int i = 0; i < tocontinue3.Length; i++)
+                {
+                    Console.Write(tocontinue3[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ReadLine();
+                p.Send("cg_drawgun 0");
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Success! If you tab into your game, you can see now that the players gun is gone!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "The next thing you're probably wondering, is what is that code in the beginning all about?\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Well, that code is something called a ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "config";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = ".\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "All a config is, is just a long string of commands that makes the game look better.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "A config looks something like this: \n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "timescale 0.025\ncom_maxfps 30\ncg_fov 90\ncg_gun_x  .2\ncg_gun_z - .2\nr_dof_bias 0.1\nr_dof_enable 1\nr_dof_tweak 1\nr_dof_viewModelStart 1\nr_dof_viewModelend 6\nr_dof_nearBlur 2\nr_dof_nearEnd 1\nr_dof_farBlur 1\nr_dof_farStart 300\nr_dof_farEnd 1300\nr_dofHDR 4\nr_specularmap 3\n\nr_specularcolorscale 2\nr_fxaa 1\nr_ssao 1\nr_ssaointensity 0.89\nr_ssaoscale 55\nr_ssaoradius 39\nr_ssaobias 0.15\nr_ssaoDebug 1\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(10);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Unlike traditional consoles, if you want to use your config, all you need to do is upload it to the site!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Once uploaded, your config will be given a code. This code is permanent and can be used as many times as you like.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Already have a config? Go ahead and upload it! Simply type ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "upload";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = " to be taken to the upload page right now!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Type anything else or press enter to use one of our configs: ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                string what = Console.ReadLine();
+                if (what == "upload")
+                {
+                    Process.Start("https://consol.cf/upload");
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Great! If you uploaded your own code, use that, or use our code! Our code is ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "zxkfE\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Please note that codes are case sensitive.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Enter code here: ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                url = Console.ReadLine();
+                string urlprefix2 = "http://consol.cf/upload/configs/";
+                string urlsuffix2 = ".cfg";
+                WebConfigReader conf =
+                new WebConfigReader(urlprefix2 + url + urlsuffix2);
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Great! Now, press ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "enter";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = " to send the config!";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                foreach (string s in tokens)
+                p.Send(s);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "As you can see, your game looks different now. The time may be slower, the lighting may be different, the sky may be darker, ect.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "And that is the main premise of CONSOL! All you have to do is upload your config, enter your code, then use commands!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "All the commands you need to know can be found on the website ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "(";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "http://consol.cf";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = ")";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = " however, I will tell you some important ones now.\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Executing your config can be done in 3 ways. You can simply press ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "enter";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Or, you can use the commands ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "e";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "' ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "or ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "exec\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Want to use streams? Simply type ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "streams ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "as a command!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "Want to animate any command? Simply use the ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "animate";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "' ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "command!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "Want to create your own command? Simply use the ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "'";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "custom";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "' ";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                text = "command!\n";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                text = "And that's it! Simple, right? Press enter to conclude the tutorial, and open up the full commands list on the site!\nThanks for using CONSOL!";
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    System.Threading.Thread.Sleep(50);
+                }
+                Console.WriteLine("");
+                Console.ReadLine();
+                Process.Start("https://consol.cf/commands");
+                Environment.Exit(1);
+            }
+            Console.Clear();
+            Console.WriteLine("Loading...");
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 22;
+            int cVersion = 23;
             int oVersion;
-            bool cfgselect = true;
+            bool depthon = false;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
             XDocument doc = XDocument.Load(XMLFileLocation);
             var VersionElement = doc.Descendants("Version");
             oVersion = Convert.ToInt32(string.Concat(VersionElement.Nodes()));
+            if (saved == false)
+            {
+                Console.WriteLine("Would you like to save this code? It can later be changed with the 'unsave' command. (enter yes or no)");
+                string yesorno = Console.ReadLine();
+                string yourDirectory5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string existingFilePath5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                string fullFilePath5 = Path.Combine(existingFilePath5);
+                if (yesorno == "yes")
+                {
+                    if (!Directory.Exists(existingFilePath5))
+                    {
+                        Directory.CreateDirectory(existingFilePath5);
+                    }
+                    if (!File.Exists(fullFilePath5))
+                    {
+                        File.WriteAllText(Path.Combine(yourDirectory5, codename + ".solset"), url);
+                    }
+                    Console.WriteLine("Success! Starting shortly.");
+                    System.Threading.Thread.Sleep(2000);
+                }
+            }
             if (cVersion < oVersion)
             {
                 Process.Start("https://consol.cf/update.php");
                 uninstall();
                 return;
             }
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            if (saved == true)
+            {
+                Console.WriteLine("Saved code loaded.");
+            }
+            Console.ForegroundColor = ConsoleColor.White;
             for (; ; )
             {
                 {
-                    Console.WriteLine("Please type in a command, or press ENTER to execute your config.");
+                    Console.Write("Command: ");
                     cmd = Console.ReadLine();
                     p.Send(cmd);
-                    Console.WriteLine("Command successfully executed\n");
                     if (cmd == "night")
                     {
                         p.Send(night);
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//commands//" + cmd + ".solcom"))
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
                         string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
                         string existingFile = cmd + ".solcom";
                         string fullFilePath = Path.Combine(existingFilePath, existingFile);
-                        string chirag = File.ReadAllText(Path.Combine(yourDirectory, cmd + ".solcom"));
-                        p.Send(chirag);
+                        string custom = File.ReadAllText(Path.Combine(yourDirectory, cmd + ".solcom"));
+                        p.Send(custom);
                     }
                     else if (cmd == "fps 300")
                     {
                         p.Send(threefps);
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (cmd == "reload")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine("Please enter your config's code.\n");
                         url = Console.ReadLine();
                     }
-                    else if (cmd == "select")
-                    {
-                        Console.WriteLine("Which config would you like to select? (enter 1 or 2)");
-                        cfgselect = !cfgselect;
-                    }
                     else if (cmd == "fps 600")
                     {
                         p.Send(sixfps);
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (cmd == "fps max")
                     {
                         p.Send(maxfps);
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (cmd == "quality")
                     {
                         p.Send(quality);
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (cmd == "hud")
                     {
                         p.Send(hud);
-                    }
-                    else if (cmd == "restart")
-                    {
-
+                        Console.WriteLine("Custom command successfully executed\n");
                     }
                     else if (cmd == "greenplayers")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         p.Send(greenplayers);
-                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Okay, as you can see everything looks all fucked up right now. This is normal.\nJust follow these instructions to get the greenscreened players\nPress enter to continue");
                         Console.ReadLine();
                         Console.WriteLine("Theres only one thing you have to do! Find a part of your game where the player is the only thing that isnt green, essentially making it look like how you want it to, looking at the floor helps with this.\nDon't understand what im trying to say? Type help and a video tutorial will open up.\nOnce this is done press enter.");
@@ -571,28 +1420,56 @@ namespace BO2_Console
                     }
                     else if (cmd == "depth")
                     {
-                        float dist = 0;
-                        gmFog.FogStartDist = dist;
-                        float dist2 = 2500;
-                        gmFog.FogFadeDist = dist2;
-                        float dist3 = 20000;
-                        gmFog.FogHeightDist = dist3;
-                        float dist4 = 1;
-                        gmFog.FogBiasDist = dist4;
-                        float R = 1000;
-                        float G = 1000;
-                        float B = 1000;
-                        float A = 100;
-                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
-                        float R2 = 1000;
-                        float G2 = 1000;
-                        float B2 = 1000;
-                        float A2 = 103;
-                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                        p.Send(depth);
+                        Console.WriteLine("Custom command successfully executed\n");
+                        depthon = !depthon;
+                        if (depthon == true)
+                        {
+                            float dist = 0;
+                            gmFog.FogStartDist = dist;
+                            float dist2 = 2500;
+                            gmFog.FogFadeDist = dist2;
+                            float dist3 = 20000;
+                            gmFog.FogHeightDist = dist3;
+                            float dist4 = 1;
+                            gmFog.FogBiasDist = dist4;
+                            float R = 1000;
+                            float G = 1000;
+                            float B = 1000;
+                            float A = 100;
+                            gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                            float R2 = 1000;
+                            float G2 = 1000;
+                            float B2 = 1000;
+                            float A2 = 103;
+                            gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                            p.Send(depth);
+                        }
+                        else
+                        {
+                            float dist = 200;
+                            gmFog.FogStartDist = dist;
+                            float dist2 = 36631;
+                            gmFog.FogFadeDist = dist2;
+                            float dist3 = 10702;
+                            gmFog.FogHeightDist = dist3;
+                            float dist4 = 199;
+                            gmFog.FogBiasDist = dist4;
+                            float R = 5;
+                            float G = 5;
+                            float B = 5;
+                            float A = 1;
+                            gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
+                            float R2 = 5;
+                            float G2 = 5;
+                            float B2 = 5;
+                            float A2 = 1;
+                            gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
+                            p.Send(depthoff);
+                        }
                     }
                     else if (cmd == "fogdist")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog distance");
                         float dist = float.Parse(Console.ReadLine());
@@ -600,6 +1477,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogfade")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog fade distance");
                         float dist = float.Parse(Console.ReadLine());
@@ -607,6 +1485,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogheight")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog height");
                         float dist = float.Parse(Console.ReadLine());
@@ -614,6 +1493,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogbias")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog bias");
                         float dist = float.Parse(Console.ReadLine());
@@ -621,6 +1501,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogcolor")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog color RED");
                         float R = float.Parse(Console.ReadLine());
@@ -634,6 +1515,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "fogfarcolor")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog far color RED");
                         float R = float.Parse(Console.ReadLine());
@@ -645,38 +1527,49 @@ namespace BO2_Console
                         float A = float.Parse(Console.ReadLine());
                         gmFog.FogFarColor = new ProcessMemory.Float4(R, G, B, A);
                     }
-                    else if (cmd == "depthoff")
-                    {
-                        float dist = 200;
-                        gmFog.FogStartDist = dist;
-                        float dist2 = 36631;
-                        gmFog.FogFadeDist = dist2;
-                        float dist3 = 10702;
-                        gmFog.FogHeightDist = dist3;
-                        float dist4 = 199;
-                        gmFog.FogBiasDist = dist4;
-                        float R = 5;
-                        float G = 5;
-                        float B = 5;
-                        float A = 1;
-                        gmFog.FogBaseColor = new ProcessMemory.Float4(R, G, B, A);
-                        float R2 = 5;
-                        float G2 = 5;
-                        float B2 = 5;
-                        float A2 = 1;
-                        gmFog.FogFarColor = new ProcessMemory.Float4(R2, G2, B2, A2);
-                        p.Send(depthoff);
-                    }
                     else if (cmd == "greenscreen")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         p.Send(greenscreen);
                     }
                     else if (cmd == "regular")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         p.Send(regular);
+                    }
+                    else if (cmd == "animoff")
+                    {
+                        Console.WriteLine("Command successfully executed");
+                        string cmdname = "anim";
+                        string disabled = "disabled";
+                        string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                        string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                        string existingFile = "anim.solset";
+                        string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                        if (!Directory.Exists(existingFilePath))
+                        {
+                            Directory.CreateDirectory(existingFilePath);
+                        }
+                        if (!File.Exists(fullFilePath))
+                        {
+                            File.WriteAllText(Path.Combine(yourDirectory, cmdname + ".solset"), disabled);
+                        }
+                    }
+                    else if (cmd == "animon")
+                    {
+                        string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                        Console.WriteLine("Command successfully executed");
+                        System.IO.File.Move(Path.Combine(yourDirectory) + "anim.solset", "animsdisabled");
+                    }
+                    else if (cmd == "unsave")
+                    {
+                        string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                        Console.WriteLine("Command successfully executed");
+                        System.IO.File.Move(Path.Combine(yourDirectory) + "code.solset", "codeunsaved");
                     }
                     else if (cmd == "animate")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         float startfov;
                         float endfov;
                         Console.WriteLine("What command would you like to use? Please enter the command with no space or number at the end.");
@@ -687,7 +1580,7 @@ namespace BO2_Console
                         endfov = Convert.ToSingle(Console.ReadLine());
                         Console.WriteLine("What would you like the numbers to increment in?");
                         float inc = Convert.ToSingle(Console.ReadLine());
-                        Console.WriteLine("What delay would you like ? (this is the amount of time in miliseconds between each change.)");
+                        Console.WriteLine("What delay would you like ? (this is the amount of time in miliseconds between each change.)\nWARNING: Having this below a value of 5 may cause your game to crash.");
                         int delay = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Great! Hold F11 to begin the animation, even while still ingame!\nThe animation will stop once it reaces your end value.");
                         for (; ; )
@@ -715,12 +1608,13 @@ namespace BO2_Console
                     }
                     else if (cmd == "greensky")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         p.Send(greensky);
                     }
                     else if (cmd == "streams")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         string streamsfps = "";
-                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.WriteLine("Please enter your monitors resolution");
                         Console.WriteLine("X:");
                         int xres = Convert.ToInt32(Console.ReadLine());
@@ -853,6 +1747,7 @@ namespace BO2_Console
                         }
                         else if (yes == "greenscreen")
                         {
+                            Console.WriteLine("Custom command successfully executed\n");
                             for (; ; )
                             {
                                 if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
@@ -888,6 +1783,7 @@ namespace BO2_Console
                         }
                         else if (yes == "depth")
                         {
+                            Console.WriteLine("Custom command successfully executed\n");
                             for (; ; )
                             {
                                 if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
@@ -983,6 +1879,8 @@ namespace BO2_Console
                     }
                     else if (cmd == "avidemo")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
+                        Console.WriteLine("");
                         Console.WriteLine("Hello, thank you for using AVI demo. This also works with cines!");
                         Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
                         Console.WriteLine("X:");
@@ -1039,14 +1937,16 @@ namespace BO2_Console
                     }
                     else if (cmd == "exec")
                     {
-                            WebConfigReader conf =
-                            new WebConfigReader(urlprefix + url + urlsuffix);
-                            string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
-                            foreach (string s in tokens)
-                                p.Send(s);
+                        Console.WriteLine("CFG successfully executed\n");
+                        WebConfigReader conf =
+                        new WebConfigReader(urlprefix + url + urlsuffix);
+                        string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
+                        foreach (string s in tokens)
+                            p.Send(s);
                     }
                     else if (cmd == "e")
                     {
+                        Console.WriteLine("CFG successfully executed\n");
                         WebConfigReader conf =
                         new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
@@ -1055,6 +1955,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "")
                     {
+                        Console.WriteLine("CFG successfully executed\n");
                         WebConfigReader conf =
                         new WebConfigReader(urlprefix + url + urlsuffix);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
@@ -1063,17 +1964,18 @@ namespace BO2_Console
                     }
                     else if (cmd == "help")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Process.Start("https://consol.cf/tutorial/");
                     }
                     else if (cmd == "commands")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Process.Start("http://consol.cf/commands");
                     }
                     else if (cmd == "ingame")
-                    //this currenly works, all thats needed is the ability to enter a command to stop loop.
                     {
-
-
+                        Console.WriteLine("Custom command successfully executed\n");
+                        Console.WriteLine("");
                         Console.WriteLine("Press F11 to enter config even while tabbed out. Tab back into CONSOL then press F12 to go back to normal.");
 
                         for (; ; )
@@ -1101,6 +2003,7 @@ namespace BO2_Console
                     }
                     else if (cmd == "custom")
                     {
+                        Console.WriteLine("Custom command successfully executed\n");
                         Console.WriteLine("Please enter your command like this: cmd1; cmd2; cmd3");
                         string customcmd = Console.ReadLine();
                         Console.WriteLine("Please name your command");
@@ -1125,7 +2028,6 @@ namespace BO2_Console
                             File.WriteAllText(Path.Combine(yourDirectory, cmdname + ".solcom"), customcmd);
                         }
                     }
-
                 }
             }
         }
