@@ -1,0 +1,1 @@
+Command avidemo now autodetects your monitors resolution.
