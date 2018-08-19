@@ -174,7 +174,25 @@ namespace BO2_Console
 
         public void FindGame()
         {
-            if (Process.GetProcessesByName("t6mp").Length != 0)
+            Console.WriteLine("Checking for updates...");
+            int cVersion = 25;
+            int oVersion;
+            string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
+            XDocument doc = XDocument.Load(XMLFileLocation);
+            var VersionElement = doc.Descendants("Version");
+            oVersion = Convert.ToInt32(string.Concat(VersionElement.Nodes()));
+            if (cVersion < oVersion)
+            {
+                Console.WriteLine("A new update has been released. Would you like to download it? (Enter yes or no)");
+                string update = Console.ReadLine();
+                if (update == "yes")
+                {
+                    Process.Start("https://consol.cf/update.php");
+                    Environment.Exit(1);
+                }
+            }
+            Console.Clear();
+                if (Process.GetProcessesByName("t6mp").Length != 0)
             {
                 cbuf_address = 0x5BDF70;
                 nop_address = 0x8C90DA;
@@ -471,6 +489,9 @@ namespace BO2_Console
                 "r_clearcolor2 1 1 1 0\n " +
                 "cg_drawgun 1" +
                 "r_bloomtweaks 0";
+            string day = "r_lightTweakSunColor 0.9 0.9 0.9\n" + "r_lightTweakSunLight 13\n" + "r_lightTweakSunColor 0.95568 0.712 0.459\n" + "sm_enable 1\n" +
+"sm_maxLights 4\n" + "sm_polygonoffsetscale 5\n" + "sm_polygonoffsetbias 0.2\n" + "sm_polygonoffsetbias 0.8\n" + "sm_sunSampleSizeNear 0.8\n" + "sm_sunShadowScale 1\n" +
+"r_skyColorTemp 7500\n" + "r_sky_intensity_factor0 1\n" + "r_sky_intensity_factor 1\n";
             string greenplayers = "r_zfar 1\n" + "r_lockPvs 0\n" + "r_modelLimit 0\n" + "r_clearColor 0 1 0 1\n" + "r_clearColor2 0 1 0 1\n" + "r_bloomTweaks 1";
             //Curent WIP is savefog command
             string codename = "code";
@@ -478,6 +499,8 @@ namespace BO2_Console
             bool disableanim = true;
             int delay2 = 0;
             int delay3 = 0;
+            int delay4 = 0;
+            int delay5 = 0;
             if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//settings//" + "anim" + ".solset"))
             {
                 string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
@@ -491,13 +514,17 @@ namespace BO2_Console
             {
                 delay2 = 0;
                 delay3 = 0;
+                delay4 = 0;
+                delay5 = 0;
             }
             else if (disableanim == true)
             {
                 delay2 = 50;
                 delay3 = 100;
+                delay4 = 2;
+                delay5 = 0;
             }
-            Console.WriteLine(@"      ___           ___           ___           ___           ___           ___ 
+            string logo = @"      ___           ___           ___           ___           ___           ___ 
      /\  \         /\  \         /\__\         /\  \         /\  \         /\__\
     /::\  \       /::\  \       /::|  |       /::\  \       /::\  \       /:/  /
    /:/\:\  \     /:/\:\  \     /:|:|  |      /:/\ \  \     /:/\:\  \     /:/  / 
@@ -507,9 +534,63 @@ namespace BO2_Console
   \:\  \        \:\  /:/  /      |:/:/  /   \:\ \:\__\    \:\  /:/  /   \:\  \  
    \:\  \        \:\/:/  /       |::/  /     \:\/:/  /     \:\/:/  /     \:\  \ 
     \:\__\        \::/  /        /:/  /       \::/  /       \::/  /       \:\__\
-     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/");
+     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/";
+            for (int i = 0; i < logo.Length; i++)
+            {
+                Console.Write(logo[i]);
+                System.Threading.Thread.Sleep(delay5);
+            }
             Console.WriteLine("");
             System.Threading.Thread.Sleep(250);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            string changelogdate = "Changelogs 8/18/18: \n";
+            for (int i = 0; i < changelogdate.Length; i++)
+            {
+                Console.Write(changelogdate[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            string changelog = "Day command added\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            changelog = "Slider command added - This allows you to adjust individual commands using keys, functioning like a slider\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            changelog = "Commands savefog and customfog added - Savefog allows you to save a fog preset, customfog loads it.\nNote: Currently doesn't support color.\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            changelog = "Color has to be manually added using fogcolor and fogfarcolor commands.\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            changelog = "Changelogs are now displayed in CONSOL.\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            changelog = "Updates are now checked before anything else, and are now optional.\n\n\n";
+            for (int i = 0; i < changelog.Length; i++)
+            {
+                Console.Write(changelog[i]);
+                System.Threading.Thread.Sleep(delay4);
+            }
             Console.ForegroundColor = ConsoleColor.White;
             string gameText = "Current game found: ";
             for (int i = 0; i < gameText.Length; i++)
@@ -543,7 +624,6 @@ namespace BO2_Console
                 game = game + warning;
             }
             for (int i = 0; i < game.Length; i++)
-
             {
                 Console.Write(game[i]);
                 System.Threading.Thread.Sleep(delay2);
@@ -1067,7 +1147,7 @@ namespace BO2_Console
                 }
                 string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                 foreach (string s in tokens)
-                p.Send(s);
+                    p.Send(s);
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 text = "As you can see, your game looks different now. The time may be slower, the lighting may be different, the sky may be darker, ect.\n";
@@ -1302,14 +1382,8 @@ namespace BO2_Console
             Console.WriteLine("Loading...");
             string urlprefix = "http://consol.cf/upload/configs/";
             string urlsuffix = ".cfg";
-            int cVersion = 24;
-            int oVersion;
             bool depthon = false;
-            string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             bool debug = false;
-            XDocument doc = XDocument.Load(XMLFileLocation);
-            var VersionElement = doc.Descendants("Version");
-            oVersion = Convert.ToInt32(string.Concat(VersionElement.Nodes()));
             if (saved == false)
             {
                 Console.WriteLine("Would you like to save this code? It can later be changed with the 'unsave' command. (enter yes or no)");
@@ -1330,12 +1404,6 @@ namespace BO2_Console
                     Console.WriteLine("Success! Starting shortly.");
                     System.Threading.Thread.Sleep(2000);
                 }
-            }
-            if (cVersion < oVersion)
-            {
-                Process.Start("https://consol.cf/update.php");
-                uninstall();
-                return;
             }
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -1381,6 +1449,10 @@ namespace BO2_Console
                     {
                         p.Send(sixfps);
                         Console.WriteLine("Custom command successfully executed\n");
+                    }
+                    else if (cmd == "day")
+                    {
+                        p.Send(day);
                     }
                     else if (cmd == "fps max")
                     {
@@ -1467,10 +1539,99 @@ namespace BO2_Console
                             p.Send(depthoff);
                         }
                     }
+                    else if (cmd == "savefog")
+                    {
+                        Console.WriteLine("Custom command successfully executed\n");
+                        Console.WriteLine("Please enter your fog dist: ");
+                        string fogdist = Console.ReadLine();
+                        Console.WriteLine("Please enter your fog fade: ");
+                        string fogfade = Console.ReadLine();
+                        Console.WriteLine("Please enter your fog height: ");
+                        string fogheight = Console.ReadLine();
+                        Console.WriteLine("Please enter your fog bias: ");
+                        string fogbias = Console.ReadLine();
+                        Console.WriteLine("Please name your fog preset");
+                        string cmdname = Console.ReadLine();
+                        Console.WriteLine("Thank you, press enter to confirm");
+                        string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                        string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                        string existingFile = Console.ReadLine() + ".solfog";
+                        string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                        if (!Directory.Exists(existingFilePath))
+                        {
+                            Directory.CreateDirectory(existingFilePath);
+                        }
+
+                        if (File.Exists(fullFilePath))
+                        {
+                            MessageBox.Show("Cannot create a fog preset that already exists!", "CONSOL");
+                        }
+                        //custom cmd is the replacement, cmdname is the file name
+                        if (!File.Exists(fullFilePath))
+                        {
+                            File.WriteAllText(Path.Combine(yourDirectory, cmdname + "dist" + ".solfog"), fogdist);
+                        }
+                        if (!File.Exists(fullFilePath))
+                        {
+                            File.WriteAllText(Path.Combine(yourDirectory, cmdname + "fade" + ".solfog"), fogfade);
+                        }
+                        if (!File.Exists(fullFilePath))
+                        {
+                            File.WriteAllText(Path.Combine(yourDirectory, cmdname + "height" + ".solfog"), fogheight);
+                        }
+                        if (!File.Exists(fullFilePath))
+                        {
+                            File.WriteAllText(Path.Combine(yourDirectory, cmdname + "bias" + ".solfog"), fogbias);
+                        }
+                    }
+                    else if (cmd == "customfog")
+                    {
+                        Console.WriteLine("Enter your custom fog's name");
+                        cmd = Console.ReadLine();
+                        if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//fog//" + cmd + "dist" + ".solfog"))
+                        {
+                            Console.WriteLine("Custom command successfully executed\n");
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = cmd + ".solfog";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            int dist = Int32.Parse(File.ReadAllText(Path.Combine(yourDirectory, cmd + "dist" + ".solfog")));
+                            gmFog.FogStartDist = dist;
+                        }
+                        if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//fog//" + cmd + "fade" + ".solfog"))
+                        {
+                            Console.WriteLine("Custom command successfully executed\n");
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = cmd + ".solfog";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            int fade = Int32.Parse(File.ReadAllText(Path.Combine(yourDirectory, cmd + "fade" + ".solfog")));
+                            gmFog.FogFadeDist = fade;
+                        }
+                        if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//fog//" + cmd + "height" + ".solfog"))
+                        {
+                            Console.WriteLine("Custom command successfully executed\n");
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = cmd + ".solfog";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            int height = Int32.Parse(File.ReadAllText(Path.Combine(yourDirectory, cmd + "height" + ".solfog")));
+                            gmFog.FogHeightDist = height;
+                        }
+                        if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//fog//" + cmd + "bias" + ".solfog"))
+                        {
+                            Console.WriteLine("Custom command successfully executed\n");
+                            string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//fog//";
+                            string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//commands//";
+                            string existingFile = cmd + ".solfog";
+                            string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                            int bias = Int32.Parse(File.ReadAllText(Path.Combine(yourDirectory, cmd + "bias" + ".solfog")));
+                            gmFog.FogBiasDist = bias;
+                        }
+                    }
                     else if (cmd == "fogdist")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog distance");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogStartDist = dist;
@@ -1478,7 +1639,6 @@ namespace BO2_Console
                     else if (cmd == "fogfade")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog fade distance");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogFadeDist = dist;
@@ -1486,7 +1646,6 @@ namespace BO2_Console
                     else if (cmd == "fogheight")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog height");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogHeightDist = dist;
@@ -1494,15 +1653,44 @@ namespace BO2_Console
                     else if (cmd == "fogbias")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog bias");
                         float dist = float.Parse(Console.ReadLine());
                         gmFog.FogBiasDist = dist;
                     }
+                    else if (cmd == "slider")
+                    {
+                        Console.WriteLine("Custom command successfully executed\n");
+                        float startfov;
+                        Console.WriteLine("What command would you like to use? Please enter the command with no space or number at the end.");
+                        string cmdlol = Console.ReadLine();
+                        Console.WriteLine("Please choose your starting value:");
+                        startfov = Convert.ToSingle(Console.ReadLine());
+                        Console.WriteLine("What would you like the numbers to increment in?");
+                        float inc = Convert.ToSingle(Console.ReadLine());
+                        Console.WriteLine("Great! Use the page up and page down keys to adjust your values. Press F10 to stop the slider.");
+                        for (; ; )
+                        {
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.PageUp) & 0x8000))
+                            {
+                                p.Send(cmdlol + " " + startfov);
+                                startfov = startfov + inc;
+                                System.Threading.Thread.Sleep(75);
+                            }
+                            else if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.PageDown) & 0x8000))
+                            {
+                                p.Send(cmdlol + " " + startfov);
+                                startfov = startfov - inc;
+                                System.Threading.Thread.Sleep(75);
+                            }
+                            else if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F10) & 0x8000))
+                            {
+                                break;
+                            }
+                        }
+                    }
                     else if (cmd == "fogcolor")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog color RED");
                         float R = float.Parse(Console.ReadLine());
                         Console.WriteLine("Now green");
@@ -1516,7 +1704,6 @@ namespace BO2_Console
                     else if (cmd == "fogfarcolor")
                     {
                         Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("Please enter fog far color RED");
                         float R = float.Parse(Console.ReadLine());
                         Console.WriteLine("Now green");
