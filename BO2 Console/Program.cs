@@ -174,8 +174,8 @@ namespace BO2_Console
 
         public void FindGame()
         {
-            Console.WriteLine("Checking for updates...");
-            int cVersion = 25;
+            Console.WriteLine("Checking for updates...\n");
+            int cVersion = 26;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -183,7 +183,12 @@ namespace BO2_Console
             oVersion = Convert.ToInt32(string.Concat(VersionElement.Nodes()));
             if (cVersion < oVersion)
             {
-                Console.WriteLine("A new update has been released. Would you like to download it? (Enter yes or no)");
+                Console.WriteLine("A new update has been released.\n");
+                WebClient client = new WebClient();
+                string downloadString = client.DownloadString("https://raw.githubusercontent.com/odysollo/consol/master/updatelogs.txt");
+                Console.WriteLine("This update changed the following:\n");
+                Console.WriteLine(downloadString);
+                Console.WriteLine("Would you like to download it? (Enter yes or no)");
                 string update = Console.ReadLine();
                 if (update == "yes")
                 {
@@ -542,50 +547,27 @@ namespace BO2_Console
             }
             Console.WriteLine("");
             System.Threading.Thread.Sleep(250);
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            string changelogdate = "Changelogs 8/18/18: \n";
+            Console.ForegroundColor = ConsoleColor.White;
+            string changelogdate = "Changelogs 8/19/18: \n";
             for (int i = 0; i < changelogdate.Length; i++)
             {
                 Console.Write(changelogdate[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            string changelog = "Day command added\n";
-            for (int i = 0; i < changelog.Length; i++)
-            {
-                Console.Write(changelog[i]);
-                System.Threading.Thread.Sleep(delay4);
-            }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            changelog = "Slider command added - This allows you to adjust individual commands using keys, functioning like a slider\n";
+            string changelog = "The command 'avidemo' now autodetects resolution.\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
-            Console.ForegroundColor = ConsoleColor.White;
-            changelog = "Commands savefog and customfog added - Savefog allows you to save a fog preset, customfog loads it.\nNote: Currently doesn't support color.\n";
+            changelog = "Updates will now show you the changelogs before asking you to update.\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            changelog = "Color has to be manually added using fogcolor and fogfarcolor commands.\n";
-            for (int i = 0; i < changelog.Length; i++)
-            {
-                Console.Write(changelog[i]);
-                System.Threading.Thread.Sleep(delay4);
-            }
-            Console.ForegroundColor = ConsoleColor.White;
-            changelog = "Changelogs are now displayed in CONSOL.\n";
-            for (int i = 0; i < changelog.Length; i++)
-            {
-                Console.Write(changelog[i]);
-                System.Threading.Thread.Sleep(delay4);
-            }
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            changelog = "Updates are now checked before anything else, and are now optional.\n\n\n";
+            changelog = "Fixed an issue causing reload command to be poorly spaced out and colored incorrectly.\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
@@ -1440,9 +1422,8 @@ namespace BO2_Console
                     }
                     else if (cmd == "reload")
                     {
-                        Console.WriteLine("Custom command successfully executed\n");
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.WriteLine("Please enter your config's code.\n");
+                        Console.WriteLine("Custom command successfully executed.");
+                        Console.WriteLine("Please enter your config's code.");
                         url = Console.ReadLine();
                     }
                     else if (cmd == "fps 600")
@@ -2066,12 +2047,9 @@ namespace BO2_Console
                     {
                         Console.WriteLine("Custom command successfully executed\n");
                         Console.WriteLine("");
-                        Console.WriteLine("Hello, thank you for using AVI demo. This also works with cines!");
-                        Console.WriteLine("Please enter your monitors resolution (RECORD WITH YOUR GAME IN FULLSCREEN WINDOWED)");
-                        Console.WriteLine("X:");
-                        int xres = Convert.ToInt32(Console.ReadLine());
-                        Console.WriteLine("Y:");
-                        int yres = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Hello, thank you for using AVI demo. This also works with cines, however some death animations may not look correct!");
+                        int xres = int.Parse(Screen.PrimaryScreen.Bounds.Width.ToString());
+                        int yres = int.Parse(Screen.PrimaryScreen.Bounds.Height.ToString());
                         Console.WriteLine("What com_maxfps would you like to record at? (use what your pc can run at)");
                         string avifps = Console.ReadLine();
                         Console.WriteLine("What timescale would you like to record at?(recommened 0.02)");
