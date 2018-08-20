@@ -1,3 +1,2 @@
-Command avidemo now autodetects your monitors resolution.
-Command reload is now properly spaced out.
-Updates now show update logs.
+Accounts beta added!
+Active user counter added!
