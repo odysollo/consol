@@ -14,8 +14,40 @@ using System.Text;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.IO;
+using System.Security.Cryptography;
+
 namespace BO2_Console
 {
+    public static class SHA
+    {
+
+        public static string GenerateSHA256String(string inputString)
+        {
+            SHA256 sha256 = SHA256Managed.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(inputString);
+            byte[] hash = sha256.ComputeHash(bytes);
+            return GetStringFromHash(hash);
+        }
+
+        public static string GenerateSHA512String(string inputString)
+        {
+            SHA512 sha512 = SHA512Managed.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes(inputString);
+            byte[] hash = sha512.ComputeHash(bytes);
+            return GetStringFromHash(hash);
+        }
+
+        private static string GetStringFromHash(byte[] hash)
+        {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                result.Append(hash[i].ToString("X2"));
+            }
+            return result.ToString();
+        }
+
+    }
     class BO2
     {
         #region Mem Functions & Defines
@@ -175,7 +207,7 @@ namespace BO2_Console
         public void FindGame()
         {
             Console.WriteLine("Checking for updates...\n");
-            int cVersion = 26;
+            int cVersion = 27;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -197,7 +229,7 @@ namespace BO2_Console
                 }
             }
             Console.Clear();
-                if (Process.GetProcessesByName("t6mp").Length != 0)
+            if (Process.GetProcessesByName("t6mp").Length != 0)
             {
                 cbuf_address = 0x5BDF70;
                 nop_address = 0x8C90DA;
@@ -546,28 +578,24 @@ namespace BO2_Console
                 System.Threading.Thread.Sleep(delay5);
             }
             Console.WriteLine("");
+            Console.WriteLine("");
+            WebClient myClient = new WebClient();
+            Stream response = myClient.OpenRead("https://consol.cf/usercounter");
+            // The stream data is used here.  
+            response.Close();
+            WebClient client = new WebClient();
+            string usercont = client.DownloadString("https://consol.cf/usercounter/file.txt");
+            Console.Write("Users active today: " + usercont + "\n");
             System.Threading.Thread.Sleep(250);
             Console.ForegroundColor = ConsoleColor.White;
-            string changelogdate = "Changelogs 8/19/18: \n";
+            string changelogdate = "Changelogs 8/20/18: \n";
             for (int i = 0; i < changelogdate.Length; i++)
             {
                 Console.Write(changelogdate[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            string changelog = "The command 'avidemo' now autodetects resolution.\n";
-            for (int i = 0; i < changelog.Length; i++)
-            {
-                Console.Write(changelog[i]);
-                System.Threading.Thread.Sleep(delay4);
-            }
-            changelog = "Updates will now show you the changelogs before asking you to update.\n";
-            for (int i = 0; i < changelog.Length; i++)
-            {
-                Console.Write(changelog[i]);
-                System.Threading.Thread.Sleep(delay4);
-            }
-            changelog = "Fixed an issue causing reload command to be poorly spaced out and colored incorrectly.\n";
+            string changelog = "Accounts beta launched!\nInorder to learn how to use, and to request an account, join the discord. Link is on https://consol.cf.\nActive user counter added!\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
@@ -628,7 +656,30 @@ namespace BO2_Console
                 System.Threading.Thread.Sleep(delay2);
             }
             Console.ForegroundColor = ConsoleColor.White;
-            string helpText3 = "as your code.";
+            string helpText3 = "as your code.\n";
+            for (int i = 0; i < helpText3.Length; i++)
+
+            {
+                Console.Write(helpText3[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            helpText = "Want to login? Enter ";
+            for (int i = 0; i < helpText.Length; i++)
+
+            {
+                Console.Write(helpText[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            helpText2 = "login ";
+            for (int i = 0; i < helpText2.Length; i++)
+
+            {
+                Console.Write(helpText2[i]);
+                System.Threading.Thread.Sleep(delay2);
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            helpText3 = "as your code.";
             for (int i = 0; i < helpText3.Length; i++)
 
             {
@@ -1360,6 +1411,91 @@ namespace BO2_Console
                 Process.Start("https://consol.cf/commands");
                 Environment.Exit(1);
             }
+            else if (url == "login")
+            {
+                if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//settings//" + codename + "1" + ".solset"))
+                {
+                    Console.WriteLine("Saved login.\n");
+                    string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                    string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                    string existingFile = codename + "1" + ".solset";
+                    string fullFilePath = Path.Combine(existingFilePath, existingFile);
+                    string custom2 = File.ReadAllText(Path.Combine(yourDirectory, codename + "1" + ".solset"));
+                    saved = true;
+                }
+                if (saved == false)
+                {
+                    Console.WriteLine("Please enter your username: ");
+                    string userid = Console.ReadLine();
+                    string userid2 = userid;
+                    userid = (SHA.GenerateSHA256String(userid));
+                    Console.WriteLine("Please enter your password (you wont be able to see what you're typing for security reasons): ");
+                    string password = null;
+                    while (true)
+                    {
+                        var key = System.Console.ReadKey(true);
+                        if (key.Key == ConsoleKey.Enter)
+                        break;
+                        password += key.KeyChar;
+                    };
+                    string password3 = password;
+                    password = (SHA.GenerateSHA256String(password));
+                    string password2 = (SHA.GenerateSHA256String(password + userid));
+                    WebClient passweb = new WebClient();
+                    string passwebhash = client.DownloadString("https://consol.cf/accounts/" + userid + "/" + password2 + ".txt");
+                    if (passwebhash == password)
+                    {
+                        Console.WriteLine("Success! Press enter to continue.");
+                        Console.ReadLine();
+                        string contents = client.DownloadString("https://consol.cf/accounts/" + userid + "/" + password2 + password + ".txt");
+                        Console.WriteLine("Here is all of your saved configs: \n");
+                        Console.WriteLine(contents + "\n");
+                        Console.WriteLine("Which one would you like to use?");
+                        url = Console.ReadLine();
+                        Console.WriteLine("Would you like to remember this login? (enter yes or no, this can be unsaved by using the unsave command)");
+                        string remember = Console.ReadLine();
+                        if (remember == "yes")
+                        {
+                            string yourDirectory5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                            string existingFilePath5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                            string fullFilePath5 = Path.Combine(existingFilePath5);
+                            if (!Directory.Exists(existingFilePath5))
+                            {
+                                Directory.CreateDirectory(existingFilePath5);
+                            }
+                            if (!File.Exists(fullFilePath5))
+                            {
+                                File.WriteAllText(Path.Combine(yourDirectory5, codename + "1" + ".solset"), "savedlogin");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid password. Press enter to proceed without logon.");
+                        Console.ReadLine();
+                    }
+                }
+            }
+            else if (url == "generatehashes")
+            {
+                Console.WriteLine("Enter username: ");
+                string userid = Console.ReadLine();
+                userid = (SHA.GenerateSHA256String(userid));
+                Console.WriteLine("Enter password: ");
+                string password = Console.ReadLine();
+                string password3 = password;
+                password = (SHA.GenerateSHA256String(password));
+                string password2 = (SHA.GenerateSHA256String(password + userid));
+                string passwebhash = "https://consol.cf/accounts/" + userid + "/" + password2 + ".txt";
+                string contents = "https://consol.cf/accounts/" + userid + "/" + password2 + password + ".txt";
+                Console.WriteLine("Username hash is " + userid);
+                Console.WriteLine("Password hash is " + password);
+                Console.WriteLine("Password url hash is " + passwebhash);
+                Console.WriteLine("Contents url hash is " + contents);
+                Console.WriteLine("Press enter to continue: ");
+                Console.ReadLine();
+                Environment.Exit(1);
+            }
             Console.Clear();
             Console.WriteLine("Loading...");
             string urlprefix = "http://consol.cf/upload/configs/";
@@ -1368,7 +1504,7 @@ namespace BO2_Console
             bool debug = false;
             if (saved == false)
             {
-                Console.WriteLine("Would you like to save this code? It can later be changed with the 'unsave' command. (enter yes or no)");
+                Console.WriteLine("Would you like to save this code? It can later be changed with the 'logout' command. (enter yes or no)");
                 string yesorno = Console.ReadLine();
                 string yourDirectory5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
                 string existingFilePath5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
@@ -1734,6 +1870,12 @@ namespace BO2_Console
                         string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
                         Console.WriteLine("Command successfully executed");
                         System.IO.File.Move(Path.Combine(yourDirectory) + "code.solset", "codeunsaved");
+                    }
+                    else if (cmd == "logout")
+                    {
+                        string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
+                        Console.WriteLine("Command successfully executed");
+                        System.IO.File.Move(Path.Combine(yourDirectory) + "code1.solset", "codeunsaved");
                     }
                     else if (cmd == "animate")
                     {
