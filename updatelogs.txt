@@ -1,2 +1,1 @@
-Accounts beta added!
-Active user counter added!
+Accounts fully released and functional.
