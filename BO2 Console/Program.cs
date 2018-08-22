@@ -18,6 +18,21 @@ using System.Security.Cryptography;
 
 namespace BO2_Console
 {
+    public class Win32
+    {
+        [DllImport("User32.Dll")]
+        public static extern long SetCursorPos(int x, int y);
+
+        [DllImport("User32.Dll")]
+        public static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int x;
+            public int y;
+        }
+    }
     public static class SHA
     {
 
@@ -207,7 +222,7 @@ namespace BO2_Console
         public void FindGame()
         {
             Console.WriteLine("Checking for updates...\n");
-            int cVersion = 27;
+            int cVersion = 28;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -588,14 +603,14 @@ namespace BO2_Console
             Console.Write("Users active today: " + usercont + "\n");
             System.Threading.Thread.Sleep(250);
             Console.ForegroundColor = ConsoleColor.White;
-            string changelogdate = "Changelogs 8/20/18: \n";
+            string changelogdate = "Changelogs 8/22/18: \n";
             for (int i = 0; i < changelogdate.Length; i++)
             {
                 Console.Write(changelogdate[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            string changelog = "Accounts beta launched!\nInorder to learn how to use, and to request an account, join the discord. Link is on https://consol.cf.\nActive user counter added!\n";
+            string changelog = "Accounts is now fully automated and functional!!! Visit https://consol.cf/upload to make your own account!\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
@@ -1413,86 +1428,67 @@ namespace BO2_Console
             }
             else if (url == "login")
             {
-                if (File.Exists(Path.GetDirectoryName(Application.ExecutablePath) + "//settings//" + codename + "1" + ".solset"))
+                Console.WriteLine("Please enter your username: ");
+                string userid = Console.ReadLine();
+                string useridHashed = (SHA.GenerateSHA256String(userid));
+                Console.WriteLine("Please enter your password (you wont be able to see what you're typing for security reasons): ");
+                string password = null;
+                while (true)
                 {
-                    Console.WriteLine("Saved login.\n");
-                    string yourDirectory = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
-                    string existingFilePath = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
-                    string existingFile = codename + "1" + ".solset";
-                    string fullFilePath = Path.Combine(existingFilePath, existingFile);
-                    string custom2 = File.ReadAllText(Path.Combine(yourDirectory, codename + "1" + ".solset"));
-                    saved = true;
-                }
-                if (saved == false)
-                {
-                    Console.WriteLine("Please enter your username: ");
-                    string userid = Console.ReadLine();
-                    string userid2 = userid;
-                    userid = (SHA.GenerateSHA256String(userid));
-                    Console.WriteLine("Please enter your password (you wont be able to see what you're typing for security reasons): ");
-                    string password = null;
-                    while (true)
-                    {
-                        var key = System.Console.ReadKey(true);
-                        if (key.Key == ConsoleKey.Enter)
+                    var key = System.Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
                         break;
-                        password += key.KeyChar;
-                    };
-                    string password3 = password;
-                    password = (SHA.GenerateSHA256String(password));
-                    string password2 = (SHA.GenerateSHA256String(password + userid));
-                    WebClient passweb = new WebClient();
-                    string passwebhash = client.DownloadString("https://consol.cf/accounts/" + userid + "/" + password2 + ".txt");
-                    if (passwebhash == password)
-                    {
-                        Console.WriteLine("Success! Press enter to continue.");
-                        Console.ReadLine();
-                        string contents = client.DownloadString("https://consol.cf/accounts/" + userid + "/" + password2 + password + ".txt");
-                        Console.WriteLine("Here is all of your saved configs: \n");
-                        Console.WriteLine(contents + "\n");
-                        Console.WriteLine("Which one would you like to use?");
-                        url = Console.ReadLine();
-                        Console.WriteLine("Would you like to remember this login? (enter yes or no, this can be unsaved by using the unsave command)");
-                        string remember = Console.ReadLine();
-                        if (remember == "yes")
-                        {
-                            string yourDirectory5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
-                            string existingFilePath5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
-                            string fullFilePath5 = Path.Combine(existingFilePath5);
-                            if (!Directory.Exists(existingFilePath5))
-                            {
-                                Directory.CreateDirectory(existingFilePath5);
-                            }
-                            if (!File.Exists(fullFilePath5))
-                            {
-                                File.WriteAllText(Path.Combine(yourDirectory5, codename + "1" + ".solset"), "savedlogin");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid password. Press enter to proceed without logon.");
-                        Console.ReadLine();
-                    }
+                    password += key.KeyChar;
+                };
+                string passwordHashedFirst = (SHA.GenerateSHA256String(password.ToLower()));
+                string passwordHashed = passwordHashedFirst.ToLower();
+                string cfghash = passwordHashed.ToLower() + useridHashed.ToLower();
+                string useridHashedFinal = useridHashed.ToLower() + passwordHashed.ToLower();
+                string passurl = "https://consol.cf/accounts/" + useridHashedFinal + "/password.txt";
+                WebClient passwebhash = new WebClient();
+                string passwebhashString = client.DownloadString(passurl);
+                if (passwebhashString == passwordHashed)
+                {
+                    Console.WriteLine("Success! Press enter to continue.");
+                    Console.ReadLine();
+                    string cfglistUrl = "https://consol.cf/accounts/" + useridHashedFinal + "/configs/cfglist.txt";
+                    WebClient cfglist = new WebClient();
+                    string cfglistString = client.DownloadString(cfglistUrl);
+                    Console.WriteLine(cfglistString);
+                    Console.WriteLine("");
+                    Console.WriteLine("Which one would you like to use?");
+                    string urlUrl = Console.ReadLine();
+                    url = "https://consol.cf/accounts/" + useridHashedFinal + "/configs/" + urlUrl + ".cfg";
                 }
+                else
+                {
+                    Console.WriteLine("Invalid password. Press enter to proceed without logon.");
+                    Console.ReadLine();
+                }
+
             }
             else if (url == "generatehashes")
             {
-                Console.WriteLine("Enter username: ");
+                Console.WriteLine("Please enter your username: ");
                 string userid = Console.ReadLine();
-                userid = (SHA.GenerateSHA256String(userid));
-                Console.WriteLine("Enter password: ");
-                string password = Console.ReadLine();
-                string password3 = password;
-                password = (SHA.GenerateSHA256String(password));
-                string password2 = (SHA.GenerateSHA256String(password + userid));
-                string passwebhash = "https://consol.cf/accounts/" + userid + "/" + password2 + ".txt";
-                string contents = "https://consol.cf/accounts/" + userid + "/" + password2 + password + ".txt";
-                Console.WriteLine("Username hash is " + userid);
-                Console.WriteLine("Password hash is " + password);
-                Console.WriteLine("Password url hash is " + passwebhash);
-                Console.WriteLine("Contents url hash is " + contents);
+                string useridHashed = (SHA.GenerateSHA256String(userid));
+                Console.WriteLine("Please enter your password (you wont be able to see what you're typing for security reasons): ");
+                string password = null;
+                while (true)
+                {
+                    var key = System.Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
+                        break;
+                    password += key.KeyChar;
+                };
+                string passwordHashed = (SHA.GenerateSHA256String(password.ToLower()));
+                string cfghash = passwordHashed.ToLower() + useridHashed.ToLower();
+                string useridHashedFinal = useridHashed.ToLower() + passwordHashed.ToLower();
+                string passurl = "https://consol.cf/accounts/" + useridHashedFinal + "/password.txt";
                 Console.WriteLine("Press enter to continue: ");
+                Console.WriteLine("useridHashedFinal: " + useridHashedFinal);
+                Console.WriteLine("passurl: " + passurl);
+                Console.WriteLine("password: " + passwordHashed);
                 Console.ReadLine();
                 Environment.Exit(1);
             }
@@ -1504,7 +1500,7 @@ namespace BO2_Console
             bool debug = false;
             if (saved == false)
             {
-                Console.WriteLine("Would you like to save this code? It can later be changed with the 'logout' command. (enter yes or no)");
+                Console.WriteLine("Would you like to save this code? It can later be changed with the 'unsave' command. (enter yes or no)");
                 string yesorno = Console.ReadLine();
                 string yourDirectory5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
                 string existingFilePath5 = Path.GetDirectoryName(Application.ExecutablePath) + "//settings//";
@@ -1551,10 +1547,134 @@ namespace BO2_Console
                         string custom = File.ReadAllText(Path.Combine(yourDirectory, cmd + ".solcom"));
                         p.Send(custom);
                     }
+                    else if (cmd == "projectionmap")
+                    {
+                        Console.WriteLine("Custom command successfully executed\n");
+                        Console.WriteLine("Before starting, it is very important that your read ALL text shown.\n");
+                        string streamsfps = "";
+                        int xres = int.Parse(Screen.PrimaryScreen.Bounds.Width.ToString());
+                        int yres = int.Parse(Screen.PrimaryScreen.Bounds.Height.ToString());
+                        Console.WriteLine("Please put your game into fullscreen windowed, and have its resolution match the resolution of your monitor.\nPress enter once you have done this.");
+                        Console.ReadLine();
+                        string folder1 = Path.GetDirectoryName(Application.ExecutablePath) + "//1//";
+                        string folder2 = Path.GetDirectoryName(Application.ExecutablePath) + "//2//";
+                        string folder3 = Path.GetDirectoryName(Application.ExecutablePath) + "//3//";
+                        string folder4 = Path.GetDirectoryName(Application.ExecutablePath) + "//4//";
+                        string folder5 = Path.GetDirectoryName(Application.ExecutablePath) + "//5//";
+                        string folder6 = Path.GetDirectoryName(Application.ExecutablePath) + "//6//";
+                        Console.WriteLine("What com_maxfps would you like? (recommended 30, however enter the amount your pc is able to handle)");
+                        streamsfps = Console.ReadLine();
+                        Console.WriteLine("What timescale would you like? (recommended 0.02)");
+                        string streamstimescale = Console.ReadLine();
+                        p.Send("com_maxfps " + streamsfps + "\n" + "timescale " + streamstimescale);
+                        if (!Directory.Exists(folder1))
+                        {
+                            Directory.CreateDirectory(folder1);
+                        }
+                        if (!Directory.Exists(folder2))
+                        {
+                            Directory.CreateDirectory(folder2);
+                        }
+                        if (!Directory.Exists(folder3))
+                        {
+                            Directory.CreateDirectory(folder3);
+                        }
+                        if (!Directory.Exists(folder4))
+                        {
+                            Directory.CreateDirectory(folder4);
+                        }
+                        if (!Directory.Exists(folder5))
+                        {
+                            Directory.CreateDirectory(folder5);
+                        }
+                        if (!Directory.Exists(folder6))
+                        {
+                            Directory.CreateDirectory(folder6);
+                        }
+                        Bitmap memoryImage;
+                        memoryImage = new Bitmap(xres, yres);
+                        Size s = new Size(memoryImage.Width, memoryImage.Height);
+                        Console.WriteLine("Press and hold F11 to start recording while the demo is PLAYING. Release it to stop");
+                        System.Threading.Thread.Sleep(5000);
+                        for (; ; )
+                        {
+                            if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F11) & 0x8000))
+                            {
+                                for (var i = 0; ; i++)
+                                {
+                                    SendKeys.SendWait(" ");
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(200);
+                                    string str = "";
+                                    Graphics memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//1//" +
+                                    $@"\first{i}.png");
+                                    memoryImage.Save(str);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - 1080);
+                                    System.Threading.Thread.Sleep(200);
+                                    str = "";
+                                    memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//2//" +
+                                    $@"\second{i}.png");
+                                    memoryImage.Save(str);
+                                    System.Threading.Thread.Sleep(200);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(20);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(200);
+                                    Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + 1080);
+                                    System.Threading.Thread.Sleep(200);
+                                    str = "";
+                                    memoryGraphics2 = Graphics.FromImage(memoryImage);
+                                    memoryGraphics2.CopyFromScreen(0, 0, 0, 0, s);
+                                    str = string.Format(Path.GetDirectoryName(Application.ExecutablePath) + "//3//" +
+                                    $@"\third{i}.png");
+                                    memoryImage.Save(str);
+                                    System.Threading.Thread.Sleep(20);
+                                }
+                            }
+                        }
+                    }
                     else if (cmd == "fps 300")
                     {
                         p.Send(threefps);
                         Console.WriteLine("Custom command successfully executed\n");
+                    }
+                    else if (cmd == "writeurl")
+                    {
+                        Console.WriteLine(url);
+                        Console.ReadLine();
                     }
                     else if (cmd == "reload")
                     {
@@ -2244,7 +2364,7 @@ namespace BO2_Console
                     {
                         Console.WriteLine("CFG successfully executed\n");
                         WebConfigReader conf =
-                        new WebConfigReader(urlprefix + url + urlsuffix);
+                        new WebConfigReader(url);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
                             p.Send(s);
@@ -2253,7 +2373,7 @@ namespace BO2_Console
                     {
                         Console.WriteLine("CFG successfully executed\n");
                         WebConfigReader conf =
-                        new WebConfigReader(urlprefix + url + urlsuffix);
+                        new WebConfigReader(url);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
                             p.Send(s);
@@ -2262,10 +2382,10 @@ namespace BO2_Console
                     {
                         Console.WriteLine("CFG successfully executed\n");
                         WebConfigReader conf =
-                        new WebConfigReader(urlprefix + url + urlsuffix);
+                        new WebConfigReader(url);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
-                            p.Send(s);
+                        p.Send(s);
                     }
                     else if (cmd == "help")
                     {
