@@ -222,7 +222,7 @@ namespace BO2_Console
         public void FindGame()
         {
             Console.WriteLine("Checking for updates...\n");
-            int cVersion = 28;
+            int cVersion = 29;
             int oVersion;
             string XMLFileLocation = "https://github.com/odysollo/consol/raw/master/version.xml";
             XDocument doc = XDocument.Load(XMLFileLocation);
@@ -603,14 +603,14 @@ namespace BO2_Console
             Console.Write("Users active today: " + usercont + "\n");
             System.Threading.Thread.Sleep(250);
             Console.ForegroundColor = ConsoleColor.White;
-            string changelogdate = "Changelogs 8/22/18: \n";
+            string changelogdate = "Changelogs 8/23/18: \n";
             for (int i = 0; i < changelogdate.Length; i++)
             {
                 Console.Write(changelogdate[i]);
                 System.Threading.Thread.Sleep(delay4);
             }
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            string changelog = "Accounts is now fully automated and functional!!! Visit https://consol.cf/upload to make your own account!\n";
+            string changelog = "Avidemo bug has been fixed when using accounts, and bug fixed when using regular configs.\n";
             for (int i = 0; i < changelog.Length; i++)
             {
                 Console.Write(changelog[i]);
@@ -737,7 +737,7 @@ namespace BO2_Console
                 string existingFile = codename + ".solset";
                 string fullFilePath = Path.Combine(existingFilePath, existingFile);
                 string custom2 = File.ReadAllText(Path.Combine(yourDirectory, codename + ".solset"));
-                url = custom2;
+                url = "https://consol.cf/upload/configs/" + custom2 + ".cfg";
                 saved = true;
             }
             if (saved == false)
@@ -1467,30 +1467,9 @@ namespace BO2_Console
                 }
 
             }
-            else if (url == "generatehashes")
+            else
             {
-                Console.WriteLine("Please enter your username: ");
-                string userid = Console.ReadLine();
-                string useridHashed = (SHA.GenerateSHA256String(userid));
-                Console.WriteLine("Please enter your password (you wont be able to see what you're typing for security reasons): ");
-                string password = null;
-                while (true)
-                {
-                    var key = System.Console.ReadKey(true);
-                    if (key.Key == ConsoleKey.Enter)
-                        break;
-                    password += key.KeyChar;
-                };
-                string passwordHashed = (SHA.GenerateSHA256String(password.ToLower()));
-                string cfghash = passwordHashed.ToLower() + useridHashed.ToLower();
-                string useridHashedFinal = useridHashed.ToLower() + passwordHashed.ToLower();
-                string passurl = "https://consol.cf/accounts/" + useridHashedFinal + "/password.txt";
-                Console.WriteLine("Press enter to continue: ");
-                Console.WriteLine("useridHashedFinal: " + useridHashedFinal);
-                Console.WriteLine("passurl: " + passurl);
-                Console.WriteLine("password: " + passwordHashed);
-                Console.ReadLine();
-                Environment.Exit(1);
+                url = "https://consol.cf/upload/configs/" + url + ".cfg";
             }
             Console.Clear();
             Console.WriteLine("Loading...");
@@ -1531,7 +1510,6 @@ namespace BO2_Console
                 {
                     Console.Write("Command: ");
                     cmd = Console.ReadLine();
-                    p.Send(cmd);
                     if (cmd == "night")
                     {
                         p.Send(night);
@@ -2332,11 +2310,6 @@ namespace BO2_Console
                         Bitmap memoryImage;
                         memoryImage = new Bitmap(xres, yres);
                         Size s = new Size(memoryImage.Width, memoryImage.Height);
-                        WebConfigReader conf =
-                        new WebConfigReader(urlprefix + url + urlsuffix);
-                        string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
-                        foreach (string s2 in tokens)
-                            p.Send(s2);
                         for (; ; )
                         {
                             if (Convert.ToBoolean((long)GetAsyncKeyState(System.Windows.Forms.Keys.F12) & 0x8000))
@@ -2372,11 +2345,10 @@ namespace BO2_Console
                     else if (cmd == "e")
                     {
                         Console.WriteLine("CFG successfully executed\n");
-                        WebConfigReader conf =
-                        new WebConfigReader(url);
+                        WebConfigReader conf = new WebConfigReader(url);
                         string[] tokens = Regex.Split(conf.ReadString(), @"\r?\n|\r");
                         foreach (string s in tokens)
-                            p.Send(s);
+                        p.Send(s);
                     }
                     else if (cmd == "")
                     {
@@ -2452,6 +2424,10 @@ namespace BO2_Console
                         {
                             File.WriteAllText(Path.Combine(yourDirectory, cmdname + ".solcom"), customcmd);
                         }
+                    }
+                    else
+                    {
+                        p.Send(cmd);
                     }
                 }
             }
